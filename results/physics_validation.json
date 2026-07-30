@@ -1,0 +1,13 @@
+{
+  "monopole_field": 2.28122124225443e-15,
+  "dipole_field": 1.4059681844894315e-14,
+  "field_with_wall_images": 1.9425376525046462e-15,
+  "induced_dipole_moments": 1.2499518971450284e-15,
+  "clip_conductor_moments": 1.2499518971450284e-15,
+  "mormyromast_pipeline": 6.032586173468559e-10,
+  "knollen_pipeline": 0.0,
+  "ampullary_pipeline": 0.0,
+  "morm_cd_baseline": 1.5747587239199143e-14,
+  "amp_intrinsic_baseline": 1.3209182438239619e-14,
+  "mormyromast_collective_pipeline": 4.910363304706207e-11
+}

@@ -1,0 +1,78 @@
+{
+  "hist": [
+    {
+      "iter": 64,
+      "steps": 8388608,
+      "return_per_episode": -10.47715369798243,
+      "eaten_per_episode": 1.63848876953125,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 128,
+      "steps": 16777216,
+      "return_per_episode": -3.183556107804179,
+      "eaten_per_episode": 1.3970947265625,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 192,
+      "steps": 25165824,
+      "return_per_episode": -7.855261789634824,
+      "eaten_per_episode": 1.3580322265625,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 256,
+      "steps": 33554432,
+      "return_per_episode": -5.128550421446562,
+      "eaten_per_episode": 1.39996337890625,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 320,
+      "steps": 41943040,
+      "return_per_episode": -5.417979620397091,
+      "eaten_per_episode": 1.4241943359375,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 384,
+      "steps": 50331648,
+      "return_per_episode": -5.756752226501703,
+      "eaten_per_episode": 1.5274658203125,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 448,
+      "steps": 58720256,
+      "return_per_episode": -5.45753476023674,
+      "eaten_per_episode": 1.52520751953125,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 457,
+      "steps": 59899904,
+      "return_per_episode": 1.196033689710829,
+      "eaten_per_episode": 2.0112847222222223,
+      "emit_rate": 0.0,
+      "struck_per_episode": 0.0
+    }
+  ],
+  "wall_s": 299.2920687198639,
+  "env_kwargs": {
+    "n_fish": "4",
+    "n_food": "48",
+    "n_patches": "4",
+    "episode_len": "512",
+    "batch": "512",
+    "arena_cm": "(60.0, 60.0)",
+    "eod_allowed": "False"
+  }
+}

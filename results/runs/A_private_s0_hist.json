@@ -1,0 +1,31 @@
+{
+  "hist": [
+    {
+      "iter": 128,
+      "steps": 16777216,
+      "return_per_episode": -51.814082871656865,
+      "eaten_per_episode": 1.44903564453125,
+      "emit_rate": 0.5021010637283325,
+      "struck_per_episode": 0.0
+    },
+    {
+      "iter": 137,
+      "steps": 17956864,
+      "return_per_episode": -39.84014553493924,
+      "eaten_per_episode": 1.8797743055555556,
+      "emit_rate": 0.5299029880099826,
+      "struck_per_episode": 0.0
+    }
+  ],
+  "wall_s": 178.80665373802185,
+  "env_kwargs": {
+    "n_fish": "4",
+    "n_food": "48",
+    "n_patches": "4",
+    "episode_len": "512",
+    "batch": "512",
+    "arena_cm": "(60.0, 60.0)",
+    "knollen_enabled": "False",
+    "illuminate_others": "False"
+  }
+}

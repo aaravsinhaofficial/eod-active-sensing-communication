@@ -1,0 +1,172 @@
+\documentclass[10pt,twoside]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{authblk}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+\usepackage{microtype}
+\usepackage{siunitx}
+\usepackage{enumitem}
+
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{0pt}
+
+\input{numbers}
+
+\newcommand{\eod}{EOD}
+\newcommand{\dosim}{\mathrm{do}}
+\newcommand{\KL}{D_{\mathrm{KL}}}
+
+\title{\bfseries When does active sensing become communication?\\
+\large Dissociating the private, exploitable, and signalling consequences of an
+electric discharge in simulated weakly electric fish}
+
+\author[1]{}
+\affil[1]{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Every electric organ discharge (\eod) a weakly electric fish produces does two
+things at once: it illuminates the emitter's own surroundings, and it broadcasts
+the emitter's presence to anyone with the receptors to detect it. This dual use
+makes it unusually hard to say whether an \eod\ is \emph{communication}. A recent
+multi-agent reinforcement learning model of electric fish collectives showed that
+\eod{}s shape group foraging and spacing, and defined communication operationally
+as an \eod\ that conspecifics detect and respond to. That definition cannot
+separate a signal from a cue, and the single intervention available in that
+model---silencing one fish---removes the emitter's own electrolocation and its
+neighbours' access to it simultaneously, so the resulting behavioural change
+cannot be attributed to either.
+%
+We build a GPU-vectorised reimplementation of that simulator, validated against
+the original to floating-point round-off (maximum relative deviation
+\ValMaxErr\ across all sensory pathways), that runs \ThroughputK{}k agent-steps
+per second and lets us switch the consequences of a discharge independently. A
+single motor act is decomposed into three separately controllable channels:
+\emph{reafference} (the emitter's own image of the world), \emph{illumination}
+(the same pulse lighting up a neighbour's world---an exploitable cue), and
+\emph{detection} (the pulse registering on a neighbour's knollenorgans---a
+candidate signal). We further add what the original model lacks: a metabolic cost
+per discharge, electroreceptive predators that home in on \eod{}s, switchable
+cooperative and competitive food economics, tunable social range, and persistent
+individual identity.
+%
+\ABSTRACTRESULTS
+%
+Together these results replace an effect-based definition of communication with a
+causal one, and locate the conditions under which a probe becomes a promise.
+\end{abstract}
+
+\section{Introduction}
+
+A weakly electric fish navigates by emitting brief electric pulses and reading
+the distortions that nearby objects impose on the resulting
+field~\citep{lissmann1963electric,vonderemde1999active}. The same pulses
+propagate far beyond the range at which they are useful for
+electrolocation, and other fish---equipped with dedicated knollenorgan
+electroreceptors tuned to conspecific discharges---can detect them at up to a
+metre~\citep{hopkins1988neuroethology}. An \eod\ is therefore simultaneously a
+private sensory probe and a public event. Which of these functions explains why
+the fish emits when it does is the central question of electric-fish
+neuroethology, and it is an instance of a much older problem in animal
+communication: distinguishing a \emph{signal}, whose production has been shaped
+by its effect on receivers, from a \emph{cue}, which receivers merely exploit
+\citep{maynardsmith2003animal,scottphillips2008defining}.
+
+\citet{singh2025active} introduced a computational framework in which agents with
+biophysically grounded electrosensory and electromotor systems are trained by
+multi-agent reinforcement learning to forage collectively. Their agents reproduce
+several features of real fish, and interventions on the model---ablating
+electroreceptor classes, silencing an agent's \eod, and altering the food
+distribution---show that discharges influence group foraging and social spacing.
+They define communication operationally, as ``\eod\ signals that are sensed by
+conspecifics via Knollenorgans and that influence their behavior.''
+
+That definition is a statement about effects, and effects are cheap. The
+emergent-communication literature has repeatedly shown that behavioural
+association between one agent's output and another's behaviour is not sufficient
+evidence of signalling: a receiver may be responding to something correlated with
+the message, and a sender's output may be informative without having been shaped
+by that informativeness at all
+\citep{lowe2019pitfalls,jaques2019social}. \citet{lowe2019pitfalls} formalise the
+two requirements as \emph{positive signalling} (the message carries information
+about the sender's state) and \emph{positive listening} (the message causally
+changes the receiver's behaviour), and note that either can occur without the
+other.
+
+For electric fish the problem is sharper than in a generic emergent-communication
+setup, because the channel is not a dedicated cheap-talk symbol but a physical
+act with an unavoidable private benefit. Three consequences follow from a single
+discharge:
+
+\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
+\item \textbf{Reafference.} The pulse casts an electric image of nearby objects
+      onto the emitter's own mormyromasts. This is active electrolocation and is
+      the reason the behaviour exists at all.
+\item \textbf{Illumination.} The same field polarises objects in a neighbour's
+      vicinity, and the neighbour's mormyromasts can read those images---%
+      collective electrosensing, demonstrated in real fish by
+      \citet{pedraja2024collective}. The neighbour gains information from a probe
+      it did not pay for. This is the paradigm case of a \emph{cue}.
+\item \textbf{Detection.} The pulse registers on the neighbour's knollenorgans,
+      which are dedicated to conspecific discharges and encode the emitter's
+      identity and bearing. This is the only one of the three that could be a
+      \emph{signal} in the strict sense.
+\end{enumerate}
+
+Silencing a fish removes all three at once. Any behavioural consequence is
+therefore uninterpretable: it may be the muted fish foraging worse because it can
+no longer see, its neighbours foraging worse because they lost a source of free
+illumination, or its neighbours behaving differently because a signal they were
+attending to has disappeared. This confound is not specific to the model; it is
+the reason \eod-ablation experiments in real fish are hard to interpret.
+
+\paragraph{Contributions.} We make the three consequences independently
+switchable and ask what changes.
+
+\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
+\item A \textbf{channel algebra} for dual-use signals. Reafference, illumination
+      and detection become three binary masks applied to one motor act, letting
+      us construct pulses that are private, exploitable-but-undetectable,
+      detectable-but-uninformative, phantom (heard though never emitted), replayed
+      from a different context, or scrambled in time or sender identity.
+\item An \textbf{interventional} measure of causal influence. Because we own the
+      simulator, the counterfactual in \citet{jaques2019social} can be evaluated
+      by the $\dosim$ operator directly---re-rendering the receiver's sensory
+      input under $\dosim(\text{emit}_j{=}1)$ and $\dosim(\text{emit}_j{=}0)$ with
+      every other cause held on its factual path---rather than approximated with a
+      learned model of other agents.
+\item A \textbf{cue/signal discriminator}. Following
+      \citet{scottphillips2008defining}, a signal requires that production be
+      shaped by its effect on receivers. We train matched populations in worlds
+      whose only difference is whether receivers can hear at all, and measure the
+      divergence between the resulting emission policies against the
+      seed-to-seed divergence within each world---a Sender Shaping Index (SSI).
+\item An \textbf{economics} for the discharge. The original reward has no
+      \eod\ term, so pulses are free. We add a metabolic cost per discharge,
+      predators that localise prey by their discharges, cooperative versus
+      competitive harvests, tunable social range, and persistent identity, and
+      map the resulting regimes.
+\end{enumerate}
+
+\input{results}
+
+\input{discussion}
+
+\input{methods}
+
+\small
+\bibliographystyle{unsrtnat}
+\bibliography{refs}
+
+\end{document}

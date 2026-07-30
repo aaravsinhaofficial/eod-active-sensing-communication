@@ -1,0 +1,114 @@
+\section{Discussion}
+
+\paragraph{An effect on a receiver is not a signal.}
+The operational definition used by \citet{singh2025active}---an \eod\ that
+conspecifics detect and that changes their behaviour---is satisfied in our model
+at every metabolic cost we tested, including zero. It is satisfied because the
+knollenorgan channel really does carry information and receivers really do
+respond to it. But at zero cost the emission policy is statistically
+indistinguishable between a world where receivers hear and a world where they are
+deaf. Under \citeauthor{scottphillips2008defining}'s criterion, that is a cue:
+the pulse is produced for the emitter's own sensing and others exploit it. The
+effect-based definition and the production-based definition disagree, and they
+disagree in the regime that the original model occupies.
+
+\paragraph{The muting confound.}
+Silencing a fish is the natural intervention and it is the one available in real
+experiments, but it removes three things simultaneously. Our decomposition shows
+that the three shares are not merely different in size---they act on different
+individuals and in different directions. Losing reafference hurts the muted fish;
+losing the illumination it provided hurts its neighbours; losing its detectability
+changes how the group is spaced. A single number attributed to ``communication''
+averages over all three. The same caution applies to real ablation work: an
+\eod-silenced \emph{Gnathonemus} is not a fish with its telephone taken away, it is
+a fish that has been blinded and has stopped lighting the room for everyone else.
+
+\paragraph{Why cost is the operator that converts a cue into a signal.}
+When pulses are free there is no reason to allocate them, and a policy that
+discharges at a roughly constant rate is as good as any other. The rate carries
+information about the emitter's situation only incidentally, through whatever
+weak state-dependence the encoder happens to learn. Imposing a metabolic price
+makes the pulse train a budget, and a budget must be spent where it pays. That
+allocation is what makes the train diagnostic of the emitter's state, and it is
+also what exposes the emission policy to selection on the receiver's response.
+This is the mechanism behind the classical costly-signalling results
+\citep{zahavi1975mate,grafen1990biological,szamado2011cost}, but arrived at from
+the other direction: not ``cost enforces honesty in an existing signal'' but
+``cost creates the signal by forcing a probe schedule to become informative.''
+
+\paragraph{Silence as a signal.}
+Under predation the informative variable inverts. A fish that goes quiet when a
+predator is near produces a pulse train whose \emph{gaps} correlate with danger,
+and receivers with access only to the public channel can decode that. Cessation of
+discharge is a well-documented behaviour in mormyrids, both as a predator-avoidance
+response and as a submissive display \citep{stoddard1999predation,moller1989electric}.
+Our model reproduces both without either being built in: submissive silence appears
+because subordinate fish that discharge near a dominant get bitten, and cryptic
+silence appears because the predator is guided by discharges.
+
+\paragraph{Signalling as a public good and a public hazard.}
+Two externalities operate in opposite directions and neither is in the reward
+function. A discharge illuminates neighbours' worlds, which helps them; it also
+jams their passive ampullary sense and draws an electroreceptive predator toward
+the whole group, which harms them. The balance between these determines whether
+the population settles into loud collective sensing or quiet crypsis, and it does
+so without any agent representing the group's welfare. This is worth emphasising
+because it is a route to collective signalling behaviour that requires neither
+kin selection nor reciprocity---only shared physics.
+
+\paragraph{Relation to emergent-communication work.}
+Most emergent-communication studies equip agents with a dedicated, costless,
+otherwise-useless channel \citep{foerster2016learning,mordatch2018emergence,lazaridou2017multi}.
+Under those conditions any use of the channel is communicative by construction,
+and the interesting question is what code emerges. Electric fish invert the setup:
+the channel is a physical act with a large private benefit, and the interesting
+question is whether \emph{any} of its use is communicative. We think this is the
+more common situation in biology---most signals are thought to be ritualised from
+behaviours that originally had other functions---and it is a setting in which the
+standard metrics need the production-side test that SSI supplies. Positive
+signalling and positive listening are both necessary; neither, nor both together,
+is sufficient.
+
+\section{Limitations}
+
+We list these plainly because several of them bound the claims above.
+
+\begin{enumerate}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+\item \textbf{Learning is not evolution.} Our populations adapt within a training
+      run by policy-gradient learning under a fixed reward. The Scott-Phillips
+      criterion refers to evolutionary history, and SSI is a within-lifetime
+      analogue: it asks whether the emission policy that learning arrives at
+      depends on whether receivers respond. A genuine evolutionary outer loop
+      over heritable emission traits would test the criterion directly, and we did
+      not run one. All ``evolve'' language in this paper should be read as
+      ``adapt under selection by the learning process.''
+\item \textbf{One arena scale, one group size.} Everything is measured with four
+      fish in a $60\times\SI{60}{\centi\metre}$ arena, in which the knollenorgan
+      channel at unit gain reaches every conspecific. The range sweep partially
+      addresses this, but group size is not varied, and the upstream model
+      randomises arena size in a way we deliberately do not.
+\item \textbf{Pulses are binary and fixed-amplitude.} Real fish modulate amplitude
+      and produce structured inter-pulse-interval patterns, chirps and rises, and
+      amplitude is the variable that carries the honest size information in
+      \citet{gavassa2012signal}. Our knollenorgan channel is all-or-none, as
+      upstream, so amplitude signalling is structurally impossible here. The
+      honesty results therefore concern rate and timing only.
+\item \textbf{Episodes are short.} 512 steps is about \SI{6}{\second} of fish time.
+      Dominance relationships in real fish are established over much longer
+      horizons, so the dominance-related results should be read as
+      within-encounter, not as stable social structure.
+\item \textbf{The metabolic cost is a reward term, not a physiological model.} We
+      express cost in reward units and report the fraction of the achieved return
+      it consumes so that it can be compared with measured energy budgets, but we
+      do not model the electrocyte physiology that sets the true cost, nor its
+      dependence on amplitude.
+\item \textbf{The predator is a caricature.} It is guided by discharges alone. Real
+      electroreceptive predators also use vision, mechanoreception and olfaction,
+      so real silence buys less safety than it does here, and the cryptic regime is
+      correspondingly easier to reach in our model than in a river.
+\item \textbf{Regime labels are a classification imposed on a continuum.} The
+      phase diagram is generated by thresholding continuous metrics at percentiles
+      of their own pooled distribution. The boundaries are therefore descriptive,
+      not sharp transitions, and we make no claim about criticality or
+      bifurcation.
+\end{enumerate}
