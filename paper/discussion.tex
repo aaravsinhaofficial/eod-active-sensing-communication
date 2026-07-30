@@ -6,9 +6,20 @@ conspecifics detect and that changes their behaviour---is satisfied in our model
 at every metabolic cost we tested, including zero. It is satisfied because the
 knollenorgan channel really does carry information and receivers really do
 respond to it. Yet the same channel has no detectable consequence for anyone's
-payoff: replaying, scrambling or fabricating it leaves both parties' returns
-inside a \SI{5}{\percent} equivalence margin. A system can pass every standard
-diagnostic for communication and still not be communicating.
+payoff: replaying, scrambling or fabricating it moves neither party's return by
+an amount we can resolve. We are careful about what that licenses. Our
+equivalence tests do not clear the \SI{5}{\percent} margin we set in advance,
+because the confidence intervals are wider than the margin; the defensible
+statement is \emph{no effect detectable at this sample size}, not demonstrated
+equivalence. What makes the negative interpretable is not the width of those
+intervals but the assay validation of \S\ref{sec:assay}: the same tests, applied
+to a dyad that is communicating by construction, return effects one to two orders
+of magnitude larger than anything we see here.
+
+So the strongest defensible form of the claim is this. A system can satisfy the
+standard positive-signalling and positive-listening diagnostics without any
+detectable payoff relevance and without evidence that production was shaped by
+being heard.
 
 Establishing the production-side half of the argument turned out to need more
 care than we first gave it. Disabling knollenorgans removes \emph{reception}, so
@@ -89,6 +100,26 @@ public-good account would require showing causally that the rate difference
 depends on neighbours receiving the pulses, and that experiment is not in this
 paper.
 
+\paragraph{What the discharge lacks is not a channel.}
+The decoupled control was meant to test the hypothesis that dual use is what
+blocks signalling: give the fish a variable it can move without degrading its own
+sensing, and a social function should appear. It does not. Agents mark half their
+discharges with the subtype---the rate an unmodulated bit would give---and
+deleting it costs nobody anything in any of the four ecological settings.
+
+Setting that beside the referential assay says what the missing ingredient is.
+The assay differs from the foraging world in three ways, and only one of them is
+the channel. It also gives the sender information the receiver cannot get for
+itself, and it pays both of them when the receiver acts on it. In the foraging
+world a fish can find food with its own probe, so a neighbour's private state is
+worth very little; there is a channel available and nothing to say over it.
+Channel factorisation is plausibly necessary for a signal to become distinct from
+a probe, but it is clearly not sufficient. That is a testable prediction for the
+biology: electric communication should be elaborated in exactly those contexts
+where one fish reliably knows something a conspecific cannot discover
+first-hand---dominance status, reproductive state, individual identity---and not
+in contexts where both parties can simply sense the world.
+
 \paragraph{Relation to emergent-communication work.}
 Most emergent-communication studies equip agents with a dedicated, costless,
 otherwise-useless channel \citep{foerster2016learning,mordatch2018emergence,lazaridou2017multi}.
@@ -104,48 +135,15 @@ is sufficient.
 
 \section{Limitations}
 
-We list these plainly because several of them bound the claims above.
-
-\begin{enumerate}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
-\item \textbf{Learning is not evolution.} Our populations adapt within a training
-      run by policy-gradient learning under a fixed reward. The Scott-Phillips
-      criterion refers to evolutionary history, and SSI is a within-lifetime
-      analogue: it asks whether the emission policy that learning arrives at
-      depends on whether receivers respond. A genuine evolutionary outer loop
-      over heritable emission traits would test the criterion directly, and we did
-      not run one. We write ``emerge under learning'' throughout rather than
-      ``evolve''.
-\item \textbf{One arena scale, one group size.} Everything is measured with four
-      fish in a $60\times\SI{60}{\centi\metre}$ arena, in which the knollenorgan
-      channel at unit gain reaches every conspecific. The range sweep partially
-      addresses this, but group size is not varied, and the upstream model
-      randomises arena size in a way we deliberately do not.
-\item \textbf{Pulses are binary and fixed-amplitude.} Mormyrid electric
-      communication uses inter-pulse-interval patterning and species- and
-      individual-specific waveform structure
-      \citep{baker2013multiplexed,carlson2004stereotyped}; in wave-type
-      gymnotiforms, amplitude modulations carry honest size information
-      \citep{gavassa2012signal}. Our knollenorgan channel is all-or-none, as
-      upstream, so waveform and amplitude signalling are structurally impossible
-      in the coupled condition. This is precisely the limitation the decoupled
-      condition is designed to lift, and it lifts only the crudest version of it:
-      one bit of subtype, not a graded waveform.
-\item \textbf{Episodes are short.} 512 steps is about \SI{6}{\second} of fish time.
-      Dominance relationships in real fish are established over much longer
-      horizons, so the dominance-related results should be read as
-      within-encounter, not as stable social structure.
-\item \textbf{The metabolic cost is a reward term, not a physiological model.} We
-      express cost in reward units and report the fraction of the achieved return
-      it consumes so that it can be compared with measured energy budgets, but we
-      do not model the electrocyte physiology that sets the true cost, nor its
-      dependence on amplitude.
-\item \textbf{The predator is a caricature.} It is guided by discharges alone. Real
-      electroreceptive predators also use vision, mechanoreception and olfaction,
-      so real silence buys less safety than it does here, and the cryptic regime is
-      correspondingly easier to reach in our model than in a river.
-\item \textbf{Regime labels are a classification imposed on a continuum.} The
-      phase diagram is generated by thresholding continuous metrics at percentiles
-      of their own pooled distribution. The boundaries are therefore descriptive,
-      not sharp transitions, and we make no claim about criticality or
-      bifurcation.
-\end{enumerate}
+Six bound the claims above and are set out in full in
+Appendix~\ref{app:limitations}. The three that matter most: our populations adapt
+by policy-gradient learning within a training run, not by an evolutionary outer
+loop, so the Sender Shaping Index is a within-lifetime analogue of
+\citeauthor{scottphillips2008defining}'s criterion rather than the criterion
+itself, and we write \emph{emerge under learning} throughout. Our knollenorgan
+channel is all-or-none, as upstream, so graded amplitude signalling is
+structurally impossible in the coupled condition, and the decoupled condition
+lifts only the crudest version of that restriction --- one bit, not a waveform.
+And the equivalence tests do not reach the margin we set in advance; what makes
+the nulls interpretable is the assay validation of \S\ref{sec:assay}, not the
+width of those intervals.

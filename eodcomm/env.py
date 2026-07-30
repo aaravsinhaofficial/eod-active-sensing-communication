@@ -87,6 +87,36 @@ class EnvConfig:
     # listened to from merely having social input -- which `knollen_enabled`
     # does not, because it removes reception rather than audibility.
     yoked_knollen: bool = False
+
+    # --- referential assay -------------------------------------------------
+    # A Lewis signalling game embedded in the same physics.  One immobile fish
+    # privately observes which of two sites holds food; the other must go to a
+    # site.  The sender's discharges are forced onto a fixed schedule, so pulse
+    # timing carries nothing and the subtype bit is the only free channel.
+    # Proximity shaping is disabled because it is computed from ground-truth
+    # food distance and would leak the answer to the receiver.
+    task: str = "forage"            # 'forage' | 'referential'
+    ref_sites: tuple = ((15.0, 55.0), (75.0, 55.0))
+    ref_sender_xy: tuple = (45.0, 8.0)
+    ref_start_xy: tuple = (45.0, 16.0)
+    ref_sender_emits: bool = True   # force the sender's pulse schedule
+    ref_trial_len: int = 128        # many trials per episode
+    ref_at_site_cm: float = 12.0    # scoring radius; well inside the 60 cm gap
+    ref_site_shaping: float = 3.0   # shaping toward the nearest *site*: symmetric
+                                    # between the two, so it leaks no answer
+    # Ground-truth positive control.  With a scripted sender the existence of
+    # communication is not in question -- the subtype simply *is* the private
+    # cue -- so the experiment tests whether our assays detect communication
+    # known to be present, rather than whether policy gradient can invent it.
+    #   'none'    the sender learns what to send (the emergent condition)
+    #   'honest'  subtype := active site
+    #   'random'  subtype := a fair coin, rate-matched, carrying nothing
+    ref_scripted: str = "none"
+    # Score the referential task on reaching the site the signal names, once per
+    # trial.  Scoring it on food eaten would confound signal use with
+    # close-range foraging skill, which is not what is under test.
+    ref_arrival_reward: float = 10.0
+
     morm_enabled: bool = True
     amp_enabled: bool = True
 
@@ -172,6 +202,7 @@ class FishEnv:
             + 1                          # bite cooldown
             + 1                          # eat cooldown
             + (self.n_knollen_slots if cfg.signal_channel else 0)  # heard subtype
+            + (5 if cfg.task == "referential" else 0)   # private cue + 2 site bearings
         )
         self.n_disc = 3 if cfg.signal_channel else 2
         self.act_dim = 2 + self.n_disc  # thrust, turn, emit, bite [, signal]
@@ -272,6 +303,12 @@ class FishEnv:
             self.size = torch.full((B, F), 0.5, device=self.dev, dtype=self.dt_type)
 
         self._spawn_food()
+        if cfg.task == "referential":
+            self.pos[:, 0] = self._t(cfg.ref_sender_xy)
+            self.pos[:, 1:] = self._t(cfg.ref_start_xy)
+            self.pos[:, 1:] += (torch.rand(self.pos[:, 1:].shape, generator=self.g,
+                                           device=self.dev, dtype=self.dt_type) - 0.5) * 4.0
+            self.theta[:] = math.pi / 2
 
         self.pred_pos = torch.rand((B, cfg.n_pred, 2), generator=self.g, device=self.dev, dtype=self.dt_type)
         self.pred_pos[..., 0] *= w
@@ -280,6 +317,8 @@ class FishEnv:
 
         self.last_act = torch.zeros((B, F, 4), device=self.dev, dtype=self.dt_type)
         self._sig = torch.zeros((B, F), device=self.dev, dtype=torch.bool)
+        self._arrived = torch.zeros((B, F), device=self.dev, dtype=torch.bool)
+        self._rand_bit = (torch.rand((B,), generator=self.g, device=self.dev) < 0.5)
         self.was_bitten = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.bite_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.eat_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
@@ -291,6 +330,8 @@ class FishEnv:
 
     def _spawn_food(self):
         cfg = self.cfg
+        if cfg.task == "referential":
+            return self._spawn_referential()
         B, N = self.B, cfg.n_food
         w, h = cfg.arena_cm
         k = cfg.n_patches
@@ -305,6 +346,60 @@ class FishEnv:
         self.food[..., 1] = self.food[..., 1].clamp(max=h - 1)
         self.food_alive = torch.ones((B, N), device=self.dev, dtype=torch.bool)
         self.food_theta = torch.rand((B, N), generator=self.g, device=self.dev, dtype=self.dt_type) * 2 * math.pi
+
+    def _spawn_referential(self, which=None):
+        cfg = self.cfg
+        B, N = self.B, cfg.n_food
+        sites = self._t(cfg.ref_sites)                       # (2,2)
+        new = (torch.rand((B,), generator=self.g, device=self.dev) < 0.5).long()
+        self.active = new if which is None else torch.where(which, new, self.active)
+        centre = sites[self.active]                          # (B,2)
+        jitter = torch.randn((B, N, 2), generator=self.g, device=self.dev,
+                             dtype=self.dt_type) * 2.5
+        food = (centre[:, None, :] + jitter)
+        w, h = cfg.arena_cm
+        food[..., 0] = food[..., 0].clamp(1.0, w - 1)
+        food[..., 1] = food[..., 1].clamp(1.0, h - 1)
+        alive = torch.ones((B, N), device=self.dev, dtype=torch.bool)
+        th = torch.rand((B, N), generator=self.g, device=self.dev, dtype=self.dt_type) * 2 * math.pi
+        if which is None:
+            self.food, self.food_alive, self.food_theta = food, alive, th
+        else:
+            m = which[:, None]
+            self.food = torch.where(m[..., None], food, self.food)
+            self.food_alive = torch.where(m, alive, self.food_alive)
+            self.food_theta = torch.where(m, th, self.food_theta)
+
+    def _referential_trial_reset(self):
+        """Begin a fresh trial: new active site, fresh food, receiver back at the gate.
+
+        Many short trials per episode rather than one long one.  Each trial is an
+        independent signalling event, and that is what makes the game learnable
+        in a practical number of steps -- with one trial per episode the sender
+        gets a single bit of feedback per 384 steps.
+        """
+        cfg = self.cfg
+        due = (self.t % cfg.ref_trial_len) == 0
+        cleared = ~self.food_alive.any(-1)
+        which = cleared | torch.full_like(cleared, bool(due))
+        if not bool(which.any()):
+            return
+        self._spawn_referential(which)
+        start = self._t(cfg.ref_start_xy)
+        jit = (torch.rand((self.B, self.F - 1, 2), generator=self.g, device=self.dev,
+                          dtype=self.dt_type) - 0.5) * 4.0
+        self.pos[:, 1:] = torch.where(which[:, None, None], start + jit, self.pos[:, 1:])
+        self.theta[:, 1:] = torch.where(
+            which[:, None], torch.full_like(self.theta[:, 1:], math.pi / 2), self.theta[:, 1:])
+        # Re-baseline the shaping reference at the teleport.  Without this the
+        # jump back to the gate registers as a large increase in distance-to-site
+        # and the agent is punished precisely for finishing a trial.
+        sites = self._t(cfg.ref_sites)
+        d_new = torch.cdist(self.pos, sites[None].expand(self.B, 2, 2)).min(-1).values
+        self.prev_food_dist = torch.where(which[:, None], d_new, self.prev_food_dist)
+        self._arrived = torch.where(which[:, None], torch.zeros_like(self._arrived), self._arrived)
+        newbit = (torch.rand((self.B,), generator=self.g, device=self.dev) < 0.5)
+        self._rand_bit = torch.where(which, newbit, self._rand_bit)
 
     # ------------------------------------------------------------------
     # Sensing
@@ -530,6 +625,19 @@ class FishEnv:
             elif getattr(self, "_scramble_subtype", False):
                 sgf = sgf[torch.randperm(self.B, generator=self.g, device=self.dev)]
             extra.append(sgf)
+        if self.cfg.task == "referential":
+            cue = torch.zeros((self.B, self.F), device=self.dev, dtype=self.dt_type)
+            cue[:, 0] = self.active.to(self.dt_type) * 2 - 1   # sender only
+            extra.append(cue[..., None])
+            # Egocentric bearing to each candidate site.  The fish knows where
+            # the two patches are; what it does not know is which holds food.
+            # Supplying this makes the task a signalling problem rather than a
+            # navigation problem, which is what we mean to be studying.
+            sites = self._t(self.cfg.ref_sites)                    # (2,2)
+            rel = sites[None, None] - self.pos[:, :, None, :]      # (B,F,2,2)
+            ang = torch.atan2(rel[..., 1], rel[..., 0]) - self.theta[..., None]
+            extra.append(torch.cos(ang))
+            extra.append(torch.sin(ang))
         amp = self._sense_ampullary(emit_social)
         self._last_heard = heard
         obs = torch.cat(
@@ -558,6 +666,20 @@ class FishEnv:
         B, F = self.B, self.F
         w, h = cfg.arena_cm
         action = action.clamp(-1, 1)
+        if cfg.task == "referential":
+            action = action.clone()
+            action[:, 0, :2] = 0.0                      # the sender cannot move
+            if cfg.ref_sender_emits:
+                action[:, 0, 2] = 1.0                   # nor choose when to pulse
+            if cfg.ref_scripted != "none" and cfg.signal_channel:
+                if cfg.ref_scripted == "honest":
+                    bit = self.active.to(self.dt_type)
+                else:
+                    # 'random': a bit that is constant within a trial, exactly
+                    # like the honest one, but uncorrelated with the truth --
+                    # matched in every respect except informativeness
+                    bit = self._rand_bit.to(self.dt_type)
+                action[:, 0, 4] = bit * 2 - 1
         emit = (action[..., 2] > 0) & cfg.eod_allowed
         bite = action[..., 3] > 0
         sig = (action[..., 4] > 0) if cfg.signal_channel else torch.zeros_like(emit)
@@ -641,13 +763,21 @@ class FishEnv:
             group = n_ate.sum(1, keepdim=True) - n_ate
             r = r + cfg.r_eat * cfg.shared_food * group / max(F - 1, 1)
 
-        nearest = d_food_masked.min(-1).values
-        nearest = torch.where(nearest > 1e5, torch.full_like(nearest, float("nan")), nearest)
+        if cfg.task == "referential":
+            # distance to the nearest *site*, which is the same information for
+            # both sites and therefore cannot reveal which one holds food
+            sites_w = self._t(cfg.ref_sites)
+            nearest = torch.cdist(self.pos, sites_w[None].expand(B, 2, 2)).min(-1).values
+            shape_coef = cfg.ref_site_shaping
+        else:
+            nearest = d_food_masked.min(-1).values
+            nearest = torch.where(nearest > 1e5, torch.full_like(nearest, float("nan")), nearest)
+            shape_coef = cfg.r_shaping
         prev = self.prev_food_dist
         shaping = torch.where(
             torch.isnan(prev) | torch.isnan(nearest),
             torch.zeros_like(nearest),
-            cfg.r_shaping * (prev - nearest) / (w + h),
+            shape_coef * (prev - nearest) / (w + h),
         )
         r = r + shaping
         self.prev_food_dist = nearest
@@ -655,6 +785,19 @@ class FishEnv:
         r = r + cfg.r_bitten * self.was_bitten * (1 + (biter_size - self.size))
         r = r + cfg.r_bite * bit_other
         r = r + cfg.r_collision * collided.to(self.dt_type)
+        info_arrived = None
+        if cfg.task == "referential" and cfg.ref_arrival_reward:
+            # Score the referential task on reaching the site the signal names,
+            # once per trial.  Scoring it on food eaten would confound signal use
+            # with close-range foraging skill, which is not what is being tested.
+            sites_a = self._t(cfg.ref_sites)
+            d_all = torch.cdist(self.pos, sites_a[None].expand(B, 2, 2))     # (B,F,2)
+            d_act = torch.gather(d_all, 2, self.active[:, None, None].expand(B, F, 1))[..., 0]
+            near = d_act < cfg.ref_at_site_cm
+            hit = near & (~self._arrived)
+            r = r + cfg.ref_arrival_reward * hit.to(self.dt_type)
+            self._arrived = self._arrived | near
+            info_arrived = hit
         r = r - cfg.eod_cost * emit_self.to(self.dt_type)
         if cfg.signal_channel and cfg.signal_cost:
             r = r - cfg.signal_cost * self._sig.to(self.dt_type)
@@ -662,6 +805,8 @@ class FishEnv:
 
         self.last_act = action[..., :4]
         self.t += 1
+        if cfg.task == "referential":
+            self._referential_trial_reset()
         obs = self._observe(emit_self, emit_social, slot_perm, emit_illum)
         done = self.t >= cfg.episode_len
         info = {
@@ -677,6 +822,14 @@ class FishEnv:
             "bitten": self.was_bitten,
             "nearest_food": nearest,
         }
+        if cfg.task == "referential":
+            sites = self._t(cfg.ref_sites)
+            d_site = torch.cdist(self.pos, sites[None].expand(B, 2, 2))  # (B,F,2)
+            info["active"] = self.active
+            info["chose"] = d_site.argmin(-1)
+            info["at_site"] = (d_site.min(-1).values < cfg.ref_at_site_cm)
+            info["arrived"] = (info_arrived if info_arrived is not None
+                               else torch.zeros_like(self._arrived))
         return obs, r, done, info
 
     def _step_predators(self, emit_self: torch.Tensor) -> torch.Tensor:

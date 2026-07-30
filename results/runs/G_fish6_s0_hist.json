@@ -1,0 +1,21 @@
+{
+  "hist": [
+    {
+      "iter": 91,
+      "steps": 17891328,
+      "return_per_episode": 18.48623450378795,
+      "eaten_per_episode": 4.653674589572372,
+      "emit_rate": 0.5035967836668204,
+      "struck_per_episode": 0.0
+    }
+  ],
+  "wall_s": 227.97227501869202,
+  "env_kwargs": {
+    "n_fish": "6",
+    "n_food": "72",
+    "n_patches": "4",
+    "episode_len": "512",
+    "batch": "512",
+    "arena_cm": "(60.0, 60.0)"
+  }
+}

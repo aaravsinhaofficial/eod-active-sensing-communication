@@ -1,69 +1,78 @@
 \section{Results}
 
-\subsection{A validated, fast reimplementation}
+\subsection{Do the assays work? A dyad that is communicating by construction}
+\label{sec:assay}
 
-Before any claim about communication, the physics has to be right. We checked
-every stage of the sensory pipeline against the reference NumPy implementation in
-double precision on random scenes (Fig.~\ref{fig:validation},
-Table~\ref{tab:validation}). All \ValNChecks\ checks agree to floating-point
-round-off, with a maximum relative deviation of \ValMaxErr; the knollenorgan and
-ampullary pathways agree bit-for-bit. Batching thousands of arenas on GPU gives
-\ThroughputK{}k agent-steps per second in aggregate on two GPUs, which is what
-makes \NumRuns\ independent training runs affordable.
+Every negative result below rests on an assay reporting ``no communication
+here''. An assay that reported that unconditionally would produce the same
+paper, so before applying them we check that they fire on a case where
+communication is not in question.
 
-One incidental finding is worth recording for users of the reference code. Its
-configuration file specifies a wall-reflection coefficient of $0.95$, but the
-scene builder never forwards it, so the published results in fact use
-unattenuated first-order images. Matching the configuration file rather than the
-code changes the ampullary readings qualitatively, because those are computed as
-a small difference between large numbers. We match the code.
+We embed a Lewis signalling game in the same physics. One fish is immobile and
+privately observes which of two sites holds food; the other must travel to a
+site. The sender's discharges are forced onto a fixed schedule, so pulse timing
+carries nothing, and the only free channel is a one-bit discharge subtype. Both
+fish are scored on the receiver reaching the correct site, and the harvest is
+shared. Crossing an informative sender (subtype $=$ the private cue) against an
+uninformative one (a bit that is constant within a trial but uncorrelated with
+the truth), and a receiver that attends to the subtype against one that ignores
+it, gives four dyads whose communication status we know
+(Fig.~\ref{fig:assay}). Only the informative-and-attended dyad succeeds:
+\AssayArrHonest\ correct arrivals out of four per episode, against \AssayArrDeaf\
+for chance.
+
+Each assay behaves as it should, and---more usefully---each one alone is
+foolable. Positive signalling is \AssayMIHonest\ bits for the informative sender
+and \AssayMIRandom\ for the uninformative one, but it is just as high when
+nobody is listening, because it measures the sender in isolation. Causal
+influence and positive listening separate the attending receiver from the deaf
+one (\AssayCIEListen\ versus \AssayCIEDeaf\ nats) but are just as high when the
+channel carries nothing, because a receiver can organise its behaviour around a
+variable that is pure noise. Even the payoff test is foolable on its own:
+deleting the subtype costs the attending receiver \AssayKillHonest\ when the
+subtype is informative and still \AssayKillRandom\ when it is noise, because the
+receiver has come to depend on it either way.
+
+Only the conjunction identifies communication. This is the standard we hold the
+electric discharge to in what follows, and it is a standard the discharge could
+in principle meet: the instruments are demonstrably capable of detecting a
+payoff-relevant, informative, attended channel in this simulator.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.62\textwidth]{../figs/fig1_validation.pdf}
-\caption{\textbf{The GPU reimplementation reproduces the reference simulator.}
-Maximum relative deviation from the reference NumPy implementation over random
-scenes, in double precision. Bars at the left edge are exactly zero.}
-\label{fig:validation}
+\includegraphics[width=\textwidth]{../figs/fig0_assay_validation.pdf}
+\caption{\textbf{The assays detect communication when it is present, and each is
+foolable alone.} Four dyads in the referential game. Only \emph{info+attend} is
+communicating; the other three each satisfy some subset of the diagnostics.}
+\label{fig:assay}
 \end{figure}
 
-\input{validation_table}
+\subsection{A validated, fast reimplementation}
+
+The environment is a GPU reimplementation of the reference simulator, checked
+stage by stage against the original NumPy code in double precision on random
+scenes. All \ValNChecks\ checks agree to floating-point round-off (maximum
+relative deviation \ValMaxErr; the knollenorgan and ampullary pathways agree
+bit-for-bit), and it sustains \ThroughputK{}k agent-steps per second in aggregate
+on two GPUs, which is what makes \NumRuns\ independent training runs affordable.
+Appendix~\ref{app:validation} gives the per-stage table and records an incidental
+bug in the reference code: its configuration file specifies a wall-reflection
+coefficient of $0.95$, but the scene builder never forwards it, so the published
+results in fact use unattenuated images.
 
 \subsection{The discharge is worth a great deal --- to the emitter}
 
-Agents that can discharge eat \FullEaten\ food items per episode; agents
-permanently muted from the start of training eat \SilentEaten\
-(Fig.~\ref{fig:scratch}A; \ProbeGain$\times$, Hedges' $g=\ProbeD$,
-$p=\ProbeP$). The probe is doing real work, which is the precondition for
-everything that follows: an \eod\ is not a cheap-talk token, it is an expensive
-and useful act of sensing that happens to be public.
-
-Removing the three consequences one at a time separates that value. Training
-without knollenorgan detection costs little (\NoKnollenEaten\ items); training
-without the ability to illuminate neighbours costs somewhat more
-(\NoIllumEaten); a purely private probe that neither illuminates nor is detected
-gives \PrivateEaten; and removing the emitter's own reafference while leaving the
-public consequences intact gives \NoSelfEaten. The ordering already suggests where
-the value lies, but from-scratch comparisons confound the value of a channel with
-the difficulty of learning without it, so we turn to interventions on frozen
-policies.
-
-We note a methodological point that bears on how these numbers should be read.
-Training is bimodal: a seed either discovers patch foraging or remains near the
-floor set by passive sensing alone. The percentage under each bar is the fraction
-of seeds that cleared a fixed criterion (\num{3} items per episode, applied
-identically to every condition). Conditions that remove sensory channels are not
-only worse on average, they are less reliably learnable, and we report both.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig2_channels_scratch.pdf}
-\caption{\textbf{Removing each consequence of a discharge, trained from scratch.}
-Bars are means over independent seeds with bootstrap 95\% CIs; points are seeds.
-Percentages in (A) give the fraction of seeds that reached the learning
-criterion.}
-\label{fig:scratch}
-\end{figure}
+Agents that can discharge eat \FullEaten\ food items per episode; agents muted
+from the start of training eat \SilentEaten\ (\ProbeGain$\times$, Hedges'
+$g=\ProbeD$, $p=\ProbeP$). The probe does real work, which is the precondition
+for everything that follows: an \eod\ is not a cheap-talk token but an expensive
+and useful act of sensing that happens to be public. Removing the three
+consequences one at a time during training orders them---no detection
+\NoKnollenEaten, no illumination \NoIllumEaten, private probe only
+\PrivateEaten, no reafference \NoSelfEaten---but from-scratch comparisons
+confound the value of a channel with the difficulty of learning without it, and
+training here is bimodal (Appendix~\ref{app:scratch}). We therefore rely on
+interventions applied to frozen policies.
 
 \subsection{The muting effect is almost entirely private sensing}
 
@@ -266,28 +275,15 @@ the manipulation the coupled channel does not admit.}
 \label{fig:decoupled}
 \end{figure}
 
-\subsection{The regime map}
+\subsection{The regime map, and how far it generalises}
 
-Fig.~\ref{fig:phase} shows the full grid, and Fig.~\ref{fig:regimes} the
-rule-based regime labels. The structure is real and orderly, but it is the
-structure of a probe schedule being turned up and down, not of a signalling
-system appearing and disappearing: the axes that move are rate and mortality,
-while the informational and payoff-relevance axes stay near zero throughout.
+Appendix~\ref{app:regimes} gives the full cost $\times$ predation $\times$
+economics grid and the rule-based regime labels. The structure
+is orderly, but it is the structure of a probe schedule being turned up and
+down: the axes that move are discharge rate and mortality, while the
+informational and payoff-relevance axes stay near zero throughout.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig7_phase_grid.pdf}
-\caption{\textbf{Metabolic cost and eavesdropping predation jointly set discharge
-policy.} Rows are competitive and cooperative harvests; each cell is a mean over
-independent seeds.}
-\label{fig:phase}
-\end{figure}
+\GENERALISATION
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.92\textwidth]{../figs/fig8_regimes.pdf}
-\caption{\textbf{Regimes.} Rule-based labels from the pooled metric vector;
-thresholds are percentiles of each metric's own distribution across the grid, not
-hand-set. Boundaries describe a continuum, not sharp transitions.}
-\label{fig:regimes}
-\end{figure}
+\input{gen_table}
+

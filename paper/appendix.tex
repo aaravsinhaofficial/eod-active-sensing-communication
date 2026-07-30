@@ -1,0 +1,75 @@
+\clearpage
+\appendix
+\section*{Appendix}
+\addcontentsline{toc}{section}{Appendix}
+
+\section{Numerical validation against the reference implementation}
+\label{app:validation}
+
+Every stage of the sensory pipeline is checked against the original NumPy code
+in double precision on random scenes (\texttt{scripts/validate\_physics.py}).
+Agreement is at floating-point round-off, and the knollenorgan and ampullary
+pathways agree bit-for-bit.
+
+\input{validation_table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.62\textwidth]{../figs/fig1_validation.pdf}
+\caption{Maximum relative deviation from the reference NumPy implementation over
+random scenes, in double precision. Bars at the left edge are exactly zero.}
+\label{fig:validation}
+\end{figure}
+
+\paragraph{An incidental bug in the reference code.} Its configuration file sets
+a wall-reflection coefficient of $0.95$, but \texttt{ElectricScene.\_build\_%
+reflections} never forwards it to \texttt{reflect\_sources}, whose default is
+$1.0$. The published results therefore use unattenuated first-order images. We
+match the code rather than the configuration file; using $0.95$ shifts the
+corollary-discharge baseline by $\sim\num{1.4e-6}$ relative and changes ampullary
+readings qualitatively, because those are a small difference of large numbers.
+
+\section{Training the three channel conditions from scratch}
+\label{app:scratch}
+
+Training is bimodal: a seed either discovers patch foraging or stays near the
+floor set by passive sensing alone. A seed counts as converged if it reaches half
+the ceiling of its own task family, a criterion applied identically to every
+condition within a family; the fraction clearing it is reported as its own
+outcome, because conditions that remove sensory channels are not only worse on
+average but less reliably learnable.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig2_channels_scratch.pdf}
+\caption{Removing each consequence of a discharge, trained from scratch. Bars are
+means over independent seeds with bootstrap 95\% CIs; points are seeds.
+Percentages in (A) give the fraction of seeds reaching the learning criterion.}
+\label{fig:scratch}
+\end{figure}
+
+\section{Regime classification}
+\label{app:regimes}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig7_phase_grid.pdf}
+\caption{Metabolic cost and eavesdropping predation jointly set discharge policy.
+Rows are competitive and cooperative harvests; each cell is a mean over
+independent seeds.}
+\label{fig:phase}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.92\textwidth]{../figs/fig8_regimes.pdf}
+\caption{Rule-based regime labels from the pooled metric vector. Thresholds are
+percentiles of each metric's own distribution across the grid rather than
+hand-set values, so the boundaries describe a continuum and are not claims about
+sharp transitions.}
+\label{fig:regimes}
+\end{figure}
+
+\input{limitations}
+
+\input{methods_body}

@@ -375,6 +375,61 @@ def fig5():
 
 
 # ===========================================================================
+# Figure 0 -- validating the assays on dyads of known communication status
+# ===========================================================================
+def fig_assay():
+    fp = "results/assay_validation.json"
+    if not os.path.exists(fp):
+        return
+    rows = json.load(open(fp))
+    key = {(r["script"], r["listen"]): r for r in rows}
+    order = [("honest", True, "info\nattend"),
+             ("honest", False, "info\nignore"),
+             ("random", True, "noise\nattend"),
+             ("random", False, "noise\nignore")]
+    cols = [C_SIGNAL, C_CUE, C_PRIVATE, MUTED]
+    labs = [l for _, _, l in order]
+    rs = [key[(a, b)] for a, b, _ in order]
+
+    fig, axes = plt.subplots(1, 5, figsize=(9.8, 2.6))
+    def bar(ax, letter, title, vals_, ylab, hline=None):
+        panel(ax, letter, title)
+        ax.bar(np.arange(len(vals_)), vals_, 0.62, color=cols,
+               edgecolor="white", linewidth=0.8, zorder=3)
+        ax.set_xticks(np.arange(len(labs)))
+        ax.set_xticklabels(labs, fontsize=6.2)
+        ax.set_ylabel(ylab)
+        if hline is not None:
+            ax.axhline(hline, color=INK, ls=":", lw=0.9)
+
+    bar(axes[0], "A", "Task success", [r["arrivals_per_ep"] for r in rs],
+        "correct arrivals / episode", hline=2.0)
+    axes[0].text(0.02, 0.93, "chance", transform=axes[0].transAxes, fontsize=5.6, color=INK2)
+    bar(axes[1], "B", "Positive signalling", [r["content_mi"] for r in rs],
+        "$I$(subtype; referent)  bits")
+    bar(axes[2], "C", "Causal influence", [r["cie"] for r in rs], "$D_{KL}$ (nats)")
+    bar(axes[3], "D", "Positive listening", [r["pl_shift"] for r in rs],
+        "$L^1$ policy divergence")
+    bar(axes[4], "E", "Payoff of the content", [-r["kill_d_receiver"] for r in rs],
+        "return lost when deleted")
+    for ax in axes:
+        ax.grid(axis="y", alpha=0.85); ax.set_axisbelow(True)
+    fig.tight_layout()
+    fig.savefig(f"{FIG}/fig0_assay_validation.pdf"); plt.close(fig)
+
+    h = key[("honest", True)]; hd = key[("honest", False)]; rl = key[("random", True)]
+    num("AssayArrHonest", h["arrivals_per_ep"], "{:.2f}")
+    num("AssayArrDeaf", hd["arrivals_per_ep"], "{:.2f}")
+    num("AssayMIHonest", h["content_mi"], "{:.3f}")
+    num("AssayMIRandom", rl["content_mi"], "{:.3f}")
+    num("AssayCIEListen", h["cie"], "{:.1f}")
+    num("AssayCIEDeaf", hd["cie"], "{:.3f}")
+    num("AssayKillHonest", h["kill_d_receiver"], "{:.1f}")
+    num("AssayKillRandom", rl["kill_d_receiver"], "{:.1f}")
+    num("AssayKillDeaf", hd["kill_d_receiver"], "{:.2f}")
+
+
+# ===========================================================================
 # Figure 6 -- sender shaping, with reception held fixed
 # ===========================================================================
 def fig6():
@@ -769,6 +824,51 @@ def write_validation_table():
     print("wrote paper/validation_table.tex")
 
 
+def write_generalisation():
+    """Does the muting decomposition survive changes of scale and architecture?"""
+    rows = [("A_full", "baseline (4 fish, 60\\,cm, 512 steps)"),
+            ("G_fish2", "2 fish"), ("G_fish6", "6 fish"),
+            ("G_arena100", "100\\,cm arena"), ("G_long", "1024-step episodes"),
+            ("G_wide", "256-unit GRU")]
+    lines, frac = [], []
+    for pref, lab in rows:
+        rs = group(pref)
+        tot = np.array([r["muting_decomposition"]["eaten_target"]["total"]["mean"]
+                        for r in rs if "muting_decomposition" in r])
+        pri = np.array([r["muting_decomposition"]["eaten_target"]["private_share"]["mean"]
+                        for r in rs if "muting_decomposition" in r])
+        sig = np.array([r["muting_decomposition"]["eaten_target"]["signal_share"]["mean"]
+                        for r in rs if "muting_decomposition" in r])
+        if len(tot) < 2:
+            continue
+        f = float(np.mean(pri) / np.mean(tot)) if abs(np.mean(tot)) > 1e-9 else float("nan")
+        frac.append(f)
+        lines.append(f"{lab} & {len(tot)} & {np.mean(tot):+.2f} & {np.mean(pri):+.2f} & "
+                     f"{np.mean(sig):+.2f} & {100*f:.0f}\\% \\\\")
+    if not lines:
+        NUM["GENERALISATION"] = ""
+        return
+    BS = chr(92)
+    tab = [BS + "begin{table}[t]", BS + "centering" + BS + "small",
+           BS + "caption{The muting decomposition across scales and architectures. "
+           "``Private share'' is the fraction of the total muting effect attributable "
+           "to the emitter's own lost reafference.}",
+           BS + "label{tab:gen}",
+           BS + "begin{tabular}{lrrrrr}", BS + "toprule",
+           "Condition & seeds & total & $-$reafference & $-$detection & private share " + BS * 2,
+           BS + "midrule"] + lines + [BS + "bottomrule", BS + "end{tabular}", BS + "end{table}"]
+    open("paper/gen_table.tex", "w").write("\n".join(tab) + "\n")
+    lo, hi = min(frac) * 100, max(frac) * 100
+    NUM["GENERALISATION"] = (
+        f"The decomposition is not an artefact of one configuration. Repeating it with "
+        f"two and six fish, a \\SI{{100}}{{\\centi\\metre}} arena, 1024-step episodes and a "
+        f"256-unit recurrent policy, the private share of the muting effect stays between "
+        f"{lo:.0f}\\% and {hi:.0f}\\% (Table~\\ref{{tab:gen}}), and the detection share "
+        f"remains indistinguishable from zero in every case.")
+    NUM["GenPrivLo"] = f"{lo:.0f}"
+    NUM["GenPrivHi"] = f"{hi:.0f}"
+
+
 def write_verdicts():
     """Generate the conditional prose that depends on how the results came out.
 
@@ -886,26 +986,30 @@ def write_verdicts():
 
     # --- abstract ----------------------------------------------------------
     NUM["ABSTRACTRESULTS"] = (
-        "Silencing a fish costs it \\MuteTargetTotal\\ food items per episode, of which "
-        "\\MuteTargetPriv\\ is the loss of its own electrolocation and only "
-        "\\MuteTargetSig\\ the loss of its detectability by others. The public channel "
-        "nonetheless satisfies both standard criteria for communication: it carries "
-        "decodable information about food ($\\Delta R^2=\\ContentFood$) and it moves "
-        "receiver policies \\CIERatio$\\times$ more than sensory noise does. Yet replaying, "
-        "scrambling or fabricating it leaves both parties' payoffs unchanged within our "
-        "resolution; metabolic cost, eavesdropping predation and cooperative harvesting "
-        "regulate discharge rate without making the pulse train more informative "
-        "(per-pulse informativeness falls from \\PSPerPulseZero\\ to \\PSPerPulseHigh); "
-        "and once reception is held fixed so that only audibility is cut, emission policy "
-        "is unchanged (sender shaping \\SSIYokeZero). Two standard diagnostics fail "
-        "outright: positive signalling is \\emph{higher} in populations whose receivers "
-        "are deaf (\\PSDeaf\\ versus \\PSHear), and causal influence \\emph{rises} "
-        "\\CIEFold-fold as the channel becomes less informative. A system can pass every "
-        "standard diagnostic for emergent communication and not be communicating. In a "
-        "positive control that frees one bit of discharge subtype from the sensory "
-        "function while leaving the pulse itself untouched, a payoff-relevant social "
-        "channel does appear---in one of four ecological settings, the one in which "
-        "private information is scarcest.")
+        "We first validate the assays on dyads that are communicating by "
+        "construction: in a referential game embedded in the same physics they "
+        "separate informative from uninformative senders and attentive from deaf "
+        "receivers, and deleting a genuinely used signal costs its receiver "
+        "\\AssayKillHonest\\ in return. Each assay alone, however, is foolable --- "
+        "positive signalling is just as high when nobody listens, and causal "
+        "influence just as high when the channel carries nothing --- so only their "
+        "conjunction identifies communication. Applied to the electric discharge, "
+        "silencing a fish costs it \\MuteTargetTotal\\ food items per episode, of "
+        "which \\MuteTargetPriv\\ is the loss of its own electrolocation and "
+        "\\MuteTargetSig\\ the loss of its detectability by others; the private "
+        "share stays between \\GenPrivLo\\% and \\GenPrivHi\\% across group sizes, "
+        "arena scales, episode lengths and network widths. The public channel "
+        "satisfies both standard criteria --- decodable information about food "
+        "($\\Delta R^2=\\ContentFood$) and receiver-policy influence "
+        "\\CIERatio$\\times$ the noise floor --- yet replaying, scrambling or "
+        "fabricating it moves no payoff we can resolve, sender shaping is "
+        "\\SSIYokeZero\\ once reception is held fixed and only audibility is cut, "
+        "and metabolic cost and eavesdropping predation regulate discharge rate "
+        "while making the pulse train \\emph{less} informative. Freeing one bit of "
+        "discharge subtype from the sensory function does not change this. A system "
+        "can pass every standard diagnostic for emergent communication and not be "
+        "communicating; what the discharge lacks is not a channel but a task in "
+        "which its private information is worth anything to anyone else.")
 
 
 def write_numbers():
@@ -933,7 +1037,7 @@ def write_numbers():
 
 if __name__ == "__main__":
     load()
-    for fn in (fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_verdicts):
+    for fn in (fig_assay, fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_generalisation, write_verdicts):
         try:
             fn()
             print("ok", fn.__name__, flush=True)

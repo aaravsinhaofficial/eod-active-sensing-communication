@@ -1,0 +1,278 @@
+\section{Methods}
+\label{app:methods}
+
+\subsection{Simulator}
+
+The environment is a GPU reimplementation of the weakly-electric-fish simulator
+of \citet{singh2025active}, rewritten so that thousands of independent arenas are
+advanced as a single set of tensor operations. All electrostatic constants,
+receptor counts, receptor placements, dynamic ranges, transduction functions,
+locomotor limits and reward coefficients are transcribed from that codebase; the
+differences are enumerated in \S\ref{sec:divergences}.
+
+\paragraph{State and kinematics.}
+Each arena holds $F=4$ fish, $N=48$ food items and optionally one predator, in a
+\SI{60}{\centi\metre} $\times$ \SI{60}{\centi\metre} rectangular tank with
+insulating walls. Fish $i$ has position $\mathbf{x}_i$, heading $\theta_i$ and a
+body size $s_i\in[0,1]$ that is fixed within an episode and sets a dominance
+rank. The timestep is $\Delta t = 1/83\,\mathrm{s} = \SI{12.05}{\milli\second}$,
+matched by the original authors to the social echo-response latency of
+\emph{Gnathonemus petersii} \citep{schuster2001count}; episodes last $512$ steps
+($\approx\SI{6.2}{\second}$). Motion is first-order in the commanded velocities,
+\begin{equation}
+\omega_i = u^{\text{turn}}_i \omega_{\max}(1+s_i),\qquad
+\mathbf{x}_i \leftarrow \mathbf{x}_i + \hat{u}(\theta_i)\,
+  \max(u^{\text{fwd}}_i,0)\, v_{\max}(1+s_i),
+\end{equation}
+with $v_{\max}=\SI{0.422}{\centi\metre}$ per step and
+$\omega_{\max}=\SI{0.0434}{\radian}$ per step, taken from the empirical
+percentiles used upstream. A fish whose proposed position would overlap another
+fish does not move and receives a collision penalty; walls clamp position without
+penalty.
+
+\paragraph{Electric fields.}
+All fields are exact Coulomb superposition, with the distance softening
+$\varepsilon_m=\SI{e-5}{\metre}$ applied \emph{before} exponentiation exactly as
+upstream. A discharging fish carries two monopoles at $\pm\SI{0.5}{\centi\metre}$
+along its body axis with charges $\pm q_0$, $q_0=\SI{1.11e-15}{\coulomb}$
+\citep{chen2005modeling}:
+\begin{equation}
+\mathbf{E}_{\text{mono}}(\mathbf{r}) = k\sum_p
+  \frac{q_p(\mathbf{r}-\mathbf{r}_p)}{(\lVert\mathbf{r}-\mathbf{r}_p\rVert+\varepsilon_m)^3},
+\qquad
+\mathbf{E}_{\text{dip}}(\mathbf{r}) = k\sum_d
+  \left[\frac{3(\mathbf{p}_d\!\cdot\!\mathbf{u}_d)\mathbf{u}_d}{\lVert\mathbf{u}_d\rVert^5}
+        -\frac{\mathbf{p}_d}{\lVert\mathbf{u}_d\rVert^3}\right],
+\end{equation}
+with $k=\SI{8.99e9}{\newton\metre\squared\per\coulomb\squared}$ and
+$\mathbf{u}_d=\mathbf{r}-\mathbf{r}_d$. Fish and food carry permanent intrinsic
+dipoles ($\SI{1.11e-23}{}$ and $\SI{1.11e-24}{\coulomb\metre}$). Food items and
+non-discharging fish are polarisable insulating spheres,
+\begin{equation}
+\mathbf{p}^{\text{ind}}_n = 3\varepsilon_0 V_n \chi\, \mathbf{E}(\mathbf{y}_n),
+\qquad V_n = \tfrac{4}{3}\pi a_n^3,\quad \chi=-0.5,
+\end{equation}
+with fish moments capped at $q_0 a_n$. Walls contribute one order of images
+across each of the four faces, unattenuated and without sign flip.
+
+\paragraph{Receptors.}
+Each fish carries 36 mormyromasts (10 concentrated in a $\pi/3$ chin fovea, 26
+spread over the body), 24 ampullary organs and 12 knollenorgans \emph{per
+conspecific}. A receptor reads the projection of the local field onto its outward
+normal and transduces it by a sign-preserving logarithmic compression into
+$[-1,1]$,
+\begin{equation}
+\hat{s} = \operatorname{sgn}(s)\,
+\frac{\log_{10}\operatorname{clip}(|s|,E_{\min},E_{\max}) - \log_{10}E_{\min}}
+     {\log_{10}E_{\max}-\log_{10}E_{\min}} .
+\end{equation}
+Mormyromasts use $[E_{\min},E_{\max}]=[\num{5e-8},\num{5e-2}]\,\si{\volt\per\metre}$
+and report the field of the \emph{induced} dipoles alone: the direct discharge
+field is cancelled, so what remains is the electric image of objects. Images
+carried by a conspecific's discharge rather than one's own are rescaled by
+$\num{100}$, as upstream. Ampullary organs
+($[\num{2e-10},\num{2e-8}]\,\si{\volt\per\metre}$) sense only the permanent
+intrinsic dipoles and are therefore independent of any discharge; a conspecific
+discharge degrades them (multiplicative noise fraction rising from $0.05$ to
+$0.5$), so emitting jams a neighbour's passive sense. Knollenorgans are
+all-or-none: a slot fires with the sign of the local field when
+$|s|>\SI{2e-7}{\volt\per\metre}$ (a detection range of $\approx\SI{100}{\centi\metre}$
+at unit gain). Crucially, the knollenorgan array is indexed \emph{by emitter}, so
+sender identity and bearing are preserved, and each slot carries a noisy scalar
+of the emitter's relative body size.
+
+\paragraph{Task and reward.}
+Food is distributed in four Gaussian patches ($\sigma=\SI{6}{\centi\metre}$) and
+is not replenished. A fish eats an item within \SI{2}{\centi\metre} and $\pm\pi/4$
+of its heading; contested items go to the larger fish. The per-step reward is
+\begin{equation}
+r_i = 10\,n^{\text{eat}}_i
+ + \tfrac{d^{\text{prev}}_i-d^{\text{food}}_i}{W+H}
+ - 5\,b^{\text{bitten}}_i(1+s_{\text{biter}}-s_i)
+ - 0.001\,b^{\text{bite}}_i
+ - 0.5\,c^{\text{coll}}_i
+ \;\underbrace{-\,\lambda\,e_i}_{\text{new}}
+ \;\underbrace{-\,\rho\,k_i}_{\text{new}},
+\end{equation}
+where $e_i\in\{0,1\}$ indicates a discharge and $k_i$ a predator strike. The first
+five terms are upstream's; $\lambda$ (metabolic cost) and $\rho$ (predation) are
+introduced here. Under cooperative harvesting a fraction $\alpha$ of each
+neighbour's intake is added to $r_i$.
+
+\paragraph{Predators.}
+A predator perceives only fish that discharged on the current step and lie within
+\SI{60}{\centi\metre}, weights them by $1/(d+1)$, and advances
+\SI{0.45}{\centi\metre} toward the loudest. Within \SI{4}{\centi\metre} it strikes
+the nearest fish---not necessarily the emitter---and enters a 40-step refractory
+period before respawning at a random location. A silent fish is invisible, but a
+silent fish beside a discharging neighbour is not safe, so signalling imposes a
+risk externality on the group. The predator carries a strong intrinsic dipole and
+is therefore detectable passively at $\approx\SI{25}{\centi\metre}$, far inside
+the range at which it detects discharges.
+
+\subsection{The channel algebra}
+\label{sec:algebra}
+
+A discharge by fish $j$ at time $t$ is routed through three independent binary
+masks:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+$V^{\text{self}}_j$ & does $j$'s pulse produce $j$'s own electric image? \\
+$V^{\text{illum}}_j$ & does $j$'s pulse produce images on \emph{other} fish's mormyromasts? \\
+$V^{\text{det}}_j$ & does $j$'s pulse register on other fish's knollenorgans? \\
+\bottomrule
+\end{tabular}
+\end{center}
+Setting all three equal to the emitted action recovers the biological default.
+The conditions used here are: \textsc{private} ($V^{\text{illum}}=V^{\text{det}}=0$),
+\textsc{cue-only} ($V^{\text{det}}=0$), \textsc{signal-only} ($V^{\text{illum}}=0$),
+\textsc{social-only} ($V^{\text{self}}=0$), and \textsc{mute} (all zero, the
+upstream intervention). Three further manipulations act on what receivers hear
+without changing what the emitter does, so that any change in receiver behaviour
+is attributable to the public channel alone:
+\begin{itemize}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
+\item \textbf{Phantom.} Receivers perceive discharges from $j$ drawn from an
+      exogenous Bernoulli process that $j$ did not choose.
+\item \textbf{Replay.} $j$'s public train is replaced by the train the same policy
+      produced in a \emph{different arena}. Marginal rate, burst structure and
+      inter-pulse-interval statistics are preserved exactly---these are the same
+      trains---while the contingency between a pulse and the receiver's current
+      world is destroyed. A context-swapped variant pairs each arena with the one
+      whose food-proximity time series is most opposite.
+\item \textbf{Scrambling.} Timing scrambling circularly shifts each train,
+      preserving rate and destroying temporal alignment; identity scrambling
+      permutes the knollenorgan slots, preserving rate and timing and destroying
+      sender identity.
+\end{itemize}
+
+\subsection{Learning}
+
+Agents are trained with recurrent multi-agent PPO
+\citep{yu2022surprising,schulman2017proximal} under centralised training with
+decentralised execution: one shared actor (2-layer MLP encoder, LayerNorm, $\tanh$,
+128 units $\rightarrow$ GRU with 128 units \citep{cho2014learning}) and a
+centralised critic that observes all agents' concatenated observations. The action
+space is hybrid---two Gaussians for thrust and turn, two Bernoullis for discharge
+and bite. Keeping the discharge decision explicitly Bernoulli matters for the
+analysis, because its probability is exactly the quantity we intervene on. GAE
+\citep{schulman2016high} with $\gamma=0.99$, $\lambda=0.95$; PPO clip $0.2$; 4
+epochs, 4 minibatches; Adam at $\num{3e-4}$; 512 parallel arenas; 64-step
+truncated BPTT; \SI{18e6}{} agent-steps per run. Every condition is trained from
+scratch with independent seeds; \emph{no seed selection of any kind is applied},
+and all reported statistics pool over all seeds.
+
+\subsection{Measurement}
+
+\paragraph{Interventional causal influence.}
+\citet{jaques2019social} define the influence of agent $j$ on agent $i$ as the KL
+divergence between $i$'s policy conditioned on $j$'s actual action and its policy
+marginalised over $j$'s alternatives, and estimate it with a learned model of
+other agents. Owning the simulator, we evaluate the counterfactual directly:
+\begin{equation}
+\mathrm{CIE}^{j\to i}_t = \KL\!\left[
+  \pi_i\!\left(\cdot \mid h^i_t, o^i_t[\dosim(e_j{=}1)]\right)
+  \;\middle\|\;
+  \pi_i\!\left(\cdot \mid h^i_t, o^i_t[\dosim(e_j{=}0)]\right)\right],
+\label{eq:cie}
+\end{equation}
+where $o^i_t[\cdot]$ denotes re-rendering $i$'s entire sensory input under the
+intervention with the recurrent state $h^i_t$ and every other cause held on its
+factual path. The KL is analytic for the factored
+Gaussian~$\times$~Bernoulli policy. The null is the same quantity computed between
+two re-renderings of the \emph{same} intervention under independent sensory-noise
+draws: the divergence the policy shows when nothing about the message changed.
+
+\paragraph{Positive signalling and positive listening.}
+Positive signalling \citep{lowe2019pitfalls} is the mutual information between a
+window descriptor of the emitter's pulse train (discharge count over 21 steps,
+quantised) and the emitter's private state, normalised by the state entropy and
+computed \emph{conditionally on} distance-to-nearest-neighbour decile. The
+stratification is essential: in a patchy world a fish near a neighbour is also
+near food, so an unconditioned mutual information can be manufactured entirely by
+geometry. Estimation is plug-in with Miller--Madow bias correction, with a
+permutation null. Positive listening is the $L^1$ divergence between the
+receiver's factual policy and its policy under a time-shifted message, which
+preserves the marginal rate and destroys contingency---the null recommended by
+\citet{lowe2019pitfalls} in preference to a silent channel, which is out of
+distribution.
+
+\paragraph{Message content.}
+What a receiver could recover is decoded \emph{only} from receiver-observable
+quantities: the number of pulses it heard from that emitter in a trailing window
+and whether it heard anything. Ground-truth state is never given to the decoder.
+Targets are the number of live food items within \SI{10}{\centi\metre} of the
+emitter, whether the emitter eats within the next 41 steps, emitter body size
+(dominance), emitter turn command (intended movement), and whether a predator is
+within \SI{25}{\centi\metre} (danger). We report cross-validated $R^2$ or AUC
+minus the same quantity computed on time-shifted messages, so that any score
+attributable to marginal rate alone is subtracted off.
+
+\paragraph{Sender Shaping Index.}
+A signal, on \citeauthor{scottphillips2008defining}'s definition, requires that
+production be shaped by its effect on receivers. We train matched populations in a
+\emph{hearing} world and a \emph{deaf} world (knollenorgans disabled throughout
+training) and compare their emission policies on a common, condition-neutral batch
+of observations:
+\begin{equation}
+\mathrm{SSI} = \frac{\mathbb{E}_{c}\,
+  D_{\mathrm{JS}}\!\left[\pi^{\mathcal{H}}_{\text{emit}}(\cdot\mid c)\,\middle\|\,
+                          \pi^{\mathcal{D}}_{\text{emit}}(\cdot\mid c)\right]}
+{\mathbb{E}_{c}\, D_{\mathrm{JS}}\!\left[\pi^{\text{seed }a}_{\text{emit}}\,\middle\|\,
+                          \pi^{\text{seed }b}_{\text{emit}}\right]} - 1 .
+\label{eq:ssi}
+\end{equation}
+The denominator is the within-world seed-to-seed divergence, so $\mathrm{SSI}\le0$
+means the emission policy differs no more between worlds than between seeds of the
+same world---i.e.\ nobody listening changes nothing, and the pulse is a
+\emph{cue}. $\mathrm{SSI}>0$ means production is shaped by reception.
+
+\paragraph{Payoff consequences and the honesty classification.}
+Every channel condition is evaluated against the intact channel \emph{paired
+within arena}: the two rollouts share the initial food layout and the sensory
+noise stream, so differencing removes essentially all layout variance. Confidence
+intervals are 2000-sample bootstraps over arenas. Comparing the intact channel
+with a rate-matched replay isolates the payoff value of the signal's
+\emph{contingency}. Following \citet{maynardsmith2003animal} and
+\citet{dawkins1978animal}, a condition is labelled \textsc{communication} when
+contingency benefits both parties, \textsc{manipulation} when it benefits the
+sender at the receiver's expense, and \textsc{exploited cue} when it benefits the
+receiver at the sender's expense.
+
+\subsection{Validation against the reference implementation}
+\label{sec:validation}
+
+Every stage of the sensory pipeline is checked against the original NumPy code in
+double precision on random scenes (\texttt{scripts/validate\_physics.py}); results
+are in Table~\ref{tab:validation}. Agreement is at floating-point round-off, and
+the knollenorgan and ampullary pathways agree bit-for-bit.
+
+\subsection{Deliberate divergences from the reference implementation}
+\label{sec:divergences}
+
+We record these explicitly because they bear on how far our results transfer.
+
+\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
+\item \textbf{Wall-image amplitude.} Upstream's configuration file sets a
+      reflection coefficient of $0.95$, but \texttt{ElectricScene.\_build\_reflections}
+      never forwards it, so the code that produced the published results uses
+      unattenuated images. We match the code, not the configuration file. Using
+      $0.95$ instead shifts the corollary-discharge baseline by $\sim\num{1.4e-6}$
+      relative and changes ampullary readings qualitatively, because those are a
+      small difference of large numbers.
+\item \textbf{Fixed arena and episode length.} Upstream samples arena dimensions
+      per episode from $[40,300]\,\si{\centi\metre}$ and does not report episode
+      length. We fix a $60\times\SI{60}{\centi\metre}$ arena and 512 steps so that
+      conditions in a large factorial sweep are exactly comparable. Our
+      conclusions are therefore about one arena scale.
+\item \textbf{Collision resolution} is synchronous (all fish propose, then all
+      resolve) rather than in agent order.
+\item \textbf{Network size.} 128-unit GRU rather than 512, and $\num{18e6}$
+      agent-steps per run rather than $\num{5e6}$ environment steps, chosen to fit
+      \NumRuns\ independent training runs into the compute budget.
+\item \textbf{Sensory noise} is present (multiplicative, fractions given above),
+      following the upstream code; the upstream paper text describes a noiseless
+      model.
+\item \textbf{No seed selection.} Upstream selects a single seed (S1) by an
+      ethological criterion and reports analyses on it. We pool over all seeds.
+\end{enumerate}

@@ -90,7 +90,7 @@ def collect(tr, env, n_steps: int, channel: ChannelSpec | None = None, seed: int
     rec = {k: [] for k in (
         "emit", "heard", "rew", "ate", "struck", "bit", "bitten", "pos", "theta",
         "size", "nearest_food", "food_near10", "pred_dist", "p_emit", "act",
-        "dturn", "dspeed", "obs", "hx", "signal",
+        "dturn", "dspeed", "obs", "hx", "signal", "active", "arrived",
     )}
     for _ in range(n_steps):
         flat = obs.reshape(1, B * F, D)
@@ -130,6 +130,9 @@ def collect(tr, env, n_steps: int, channel: ChannelSpec | None = None, seed: int
         rec["bit"].append(info["bit"])
         rec["bitten"].append(info["bitten"])
         rec["nearest_food"].append(info["nearest_food"])
+        if "active" in info:
+            rec["active"].append(info["active"])
+            rec["arrived"].append(info["arrived"])
         obs = nobs
         if done:
             obs = env.reset()

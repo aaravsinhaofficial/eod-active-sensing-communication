@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering\small
+\caption{The muting decomposition across scales and architectures. ``Private share'' is the fraction of the total muting effect attributable to the emitter's own lost reafference.}
+\label{tab:gen}
+\begin{tabular}{lrrrrr}
+\toprule
+Condition & seeds & total & $-$reafference & $-$detection & private share \\
+\midrule
+baseline (4 fish, 60\,cm, 512 steps) & 12 & -0.52 & -0.51 & +0.03 & 98\% \\
+2 fish & 6 & -1.66 & -1.58 & -0.02 & 95\% \\
+6 fish & 6 & -0.43 & -0.59 & -0.08 & 135\% \\
+100\,cm arena & 6 & -0.31 & -0.34 & -0.02 & 107\% \\
+1024-step episodes & 6 & -1.10 & -0.92 & +0.08 & 83\% \\
+256-unit GRU & 6 & -0.61 & -0.57 & +0.11 & 93\% \\
+\bottomrule
+\end{tabular}
+\end{table}
