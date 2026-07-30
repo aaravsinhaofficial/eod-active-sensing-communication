@@ -37,12 +37,22 @@ def train_one(
     acc = {"ret": 0.0, "eat": 0.0, "emit": 0.0, "struck": 0.0, "n": 0}
     t0 = time.time()
     for it in range(n_iter):
-        obs, buf, lv, infos = tr.rollout(obs, record={"ate", "struck", "emit_self"})
+        rk = {"ate", "struck", "emit_self"}
+        if ecfg.task == "referential":
+            rk |= {"active", "arrived", "signal"}
+        obs, buf, lv, infos = tr.rollout(obs, record=rk)
         tr.update(buf, lv)
         acc["ret"] += torch.stack(buf["rew"]).sum(0).mean().item()
         acc["eat"] += torch.stack([i["ate"] for i in infos]).sum(0).mean().item()
         acc["emit"] += torch.stack([i["emit_self"] for i in infos]).to(torch.float32).mean().item()
         acc["struck"] += torch.stack([i["struck"] for i in infos]).sum(0).mean().item()
+        if ecfg.task == "referential":
+            a_ = torch.stack([i["active"] for i in infos])
+            sg = torch.stack([i["signal"] for i in infos])[:, :, 0].float()
+            acc["arr"] = acc.get("arr", 0.0) + torch.stack(
+                [i["arrived"] for i in infos])[:, :, 1].float().sum(0).mean().item()
+            acc["gap"] = acc.get("gap", 0.0) + abs(
+                sg[a_ == 1].mean().item() - sg[a_ == 0].mean().item())
         acc["n"] += 1
         if (it + 1) % (log_every * iters_per_ep) == 0 or it == n_iter - 1:
             k = acc["n"] / iters_per_ep
@@ -55,11 +65,16 @@ def train_one(
                 "struck_per_episode": acc["struck"] / k,
             }
             hist.append(rec)
+            if ecfg.task == "referential":
+                rec["arrivals_per_episode"] = acc.get("arr", 0.0) / k
+                rec["signal_gap"] = acc.get("gap", 0.0) / acc["n"]
             if verbose:
                 print(
                     f"[{tag}] {rec['steps']/1e6:5.1f}M  return={rec['return_per_episode']:+8.2f} "
                     f"eaten={rec['eaten_per_episode']:5.2f} emit={rec['emit_rate']:.3f} "
-                    f"struck={rec['struck_per_episode']:.2f}",
+                    f"struck={rec['struck_per_episode']:.2f}"
+                    + (f" arrivals={rec['arrivals_per_episode']:.2f} gap={rec['signal_gap']:.3f}"
+                       if ecfg.task == "referential" else ""),
                     flush=True,
                 )
             acc = {"ret": 0.0, "eat": 0.0, "emit": 0.0, "struck": 0.0, "n": 0}

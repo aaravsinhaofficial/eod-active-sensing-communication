@@ -47,6 +47,35 @@ communicating; the other three each satisfy some subset of the diagnostics.}
 \label{fig:assay}
 \end{figure}
 
+\subsection{What the optimiser can and cannot do}
+\label{sec:optimiser}
+
+A negative result about communication invites the objection that the learner, not
+the environment, is the limiting factor. We measured this rather than argued about
+it, because the answer bounds what the rest of the paper may claim.
+
+In the same referential game we trained recurrent MAPPO under three conditions,
+twelve seeds each at \SI{50e6}{} agent-steps: both sides learning; the receiver
+learning against a \emph{scripted honest} sender, so the message is already
+perfectly informative and only reading it must be discovered; and both sides
+learning with the positive-signalling bias of \citet{eccles2019biases}, which
+exists to break exactly this deadlock. \emph{None of the thirty-six runs solved
+the game}: all sit at chance, against \AssayArrHonest/4 for the hand-coded dyad
+reading the same observation vector. Reducing the steering noise by an order of
+magnitude and halving the credit horizon do not move it either
+(Appendix~\ref{app:optimiser}).
+
+So shared-parameter recurrent MAPPO---the standard configuration, and the one the
+reference model uses---does not discover that a single perfectly informative input
+bit should select between two known targets in an embodied task, even when told
+what to say. Our results therefore divide in two. The muting decomposition, the
+foolability of each diagnostic, and the metrics' behaviour under intervention are
+measurements on trained policies and do not depend on this. The claims that
+metabolic cost fails to create a signal, and that a decoupled channel does not
+either, are claims about what learning arrives at and inherit the bound: these
+pressures did not produce signalling under a standard learner, not that they could
+not under a better one.
+
 \subsection{A validated, fast reimplementation}
 
 The environment is a GPU reimplementation of the reference simulator, checked
@@ -264,16 +293,27 @@ about detectability. Only the content is decoupled, not the act.
 
 \DECOUPLEDRESULT
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig9_decoupled.pdf}
-\caption{\textbf{The positive control.} A discharge subtype decoupled from
-sensing, crossed with competitive and cooperative harvests and with a
-sparse-patch task in which finding food is the bottleneck. (C) deletes the
-subtype while leaving the pulse, and therefore all sensing, completely intact---%
-the manipulation the coupled channel does not admit.}
-\label{fig:decoupled}
-\end{figure}
+
+\subsection{The same decomposition in a world with no electric fish in it}
+
+If the result is about dual-use action channels rather than about
+electroreception, it should reappear wherever an action senses and broadcasts at
+once. We built a minimal environment with no fish physics in it: agents forage in
+a unit square, and a \textsc{ping} action has exactly the three consequences a
+discharge has---it shows the pinger the items near itself, it shows nearby others
+the items near \emph{them}, and it is registered by everyone as an event with a
+bearing. A weak always-on passive sense means silencing an agent is not the same
+as blinding it. The same masks, the same trainer and the same intervention battery
+apply unchanged.
+
+The decomposition replicates. Agents that can ping collect \DUFull\ items per
+episode against \DUSilent\ for permanently silent ones; muting one agent costs it
+\DUTotal\ items, of which \DUPriv\ (\DUPrivFrac\%) is its own lost reafference and
+\DUSig\ its lost detectability (Appendix~\ref{app:dualuse}). Pricing the ping
+suppresses it from \DUPingLo\ to \DUPingHi. Neither the sign nor the rough
+magnitude of the decomposition depends on the electric-fish biophysics; what it
+depends on is that one action does two jobs.
+
 
 \subsection{The regime map, and how far it generalises}
 

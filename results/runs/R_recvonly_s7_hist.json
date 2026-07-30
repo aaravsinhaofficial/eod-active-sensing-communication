@@ -1,0 +1,78 @@
+{
+  "hist": [
+    {
+      "iter": 128,
+      "steps": 8388608,
+      "return_per_episode": 32.30606140336022,
+      "eaten_per_episode": 1.19464111328125,
+      "emit_rate": 0.8455278873443604,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 1.5958251953125,
+      "signal_gap": 0.9920762814035697
+    },
+    {
+      "iter": 256,
+      "steps": 16777216,
+      "return_per_episode": 55.72333228122443,
+      "eaten_per_episode": 2.33660888671875,
+      "emit_rate": 0.8972522020339966,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 1.99072265625,
+      "signal_gap": 0.992159043536958
+    },
+    {
+      "iter": 384,
+      "steps": 25165824,
+      "return_per_episode": 52.470473758876324,
+      "eaten_per_episode": 2.33258056640625,
+      "emit_rate": 0.8830628395080566,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 1.5294189453125,
+      "signal_gap": 0.9921897746062314
+    },
+    {
+      "iter": 512,
+      "steps": 33554432,
+      "return_per_episode": 67.82169608678669,
+      "eaten_per_episode": 2.93804931640625,
+      "emit_rate": 0.8566361665725708,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 1.8544921875,
+      "signal_gap": 0.9921507718645444
+    },
+    {
+      "iter": 640,
+      "steps": 41943040,
+      "return_per_episode": 81.08070547413081,
+      "eaten_per_episode": 3.57806396484375,
+      "emit_rate": 0.9124795198440552,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 1.97900390625,
+      "signal_gap": 0.9921029014330998
+    },
+    {
+      "iter": 762,
+      "steps": 49938432,
+      "return_per_episode": 88.37558533617708,
+      "eaten_per_episode": 3.9690061475409837,
+      "emit_rate": 0.9445743248110912,
+      "struck_per_episode": 0.0,
+      "arrivals_per_episode": 2.0262551229508197,
+      "signal_gap": 0.9921360536264714
+    }
+  ],
+  "wall_s": 814.9737372398376,
+  "env_kwargs": {
+    "n_fish": "2",
+    "n_food": "10",
+    "task": "referential",
+    "signal_channel": "True",
+    "arena_cm": "(90.0, 70.0)",
+    "shared_food": "1.0",
+    "episode_len": "512",
+    "size_mode": "none",
+    "predation": "0.0",
+    "batch": "512",
+    "ref_scripted": "honest"
+  }
+}

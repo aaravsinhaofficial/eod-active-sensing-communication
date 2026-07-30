@@ -111,6 +111,120 @@ def num(k, v, fmt="{:.2f}"):
 
 
 # ===========================================================================
+# Figure 0b -- can the optimiser invent the code, or only read one?
+# ===========================================================================
+def fig_learned_ref():
+    import json as _j
+    conds = [("R_emergent", "both sides\nlearn"),
+             ("R_recvonly", "receiver learns,\nsender scripted"),
+             ("R_eccles", "both learn,\n+PS bias")]
+    got = []
+    for pref, lab in conds:
+        arr = []
+        for f in glob.glob(f"results/runs/{pref}_s*_hist.json"):
+            try:
+                h = _j.load(open(f))["hist"][-1]
+                if "arrivals_per_episode" in h:
+                    arr.append(h["arrivals_per_episode"])
+            except Exception:
+                pass
+        if arr:
+            got.append((lab, np.array(arr)))
+    if not got:
+        return
+    fp = "results/assay_validation.json"
+    scripted = None
+    if os.path.exists(fp):
+        rows = _j.load(open(fp))
+        for r in rows:
+            if r["script"] == "honest" and r["listen"]:
+                scripted = r["arrivals_per_ep"]
+
+    fig, axes = plt.subplots(1, 2, figsize=(6.4, 2.5))
+    labs = [l for l, _ in got]
+    vals_ = [v for _, v in got]
+    if scripted is not None:
+        labs = ["scripted\ndyad"] + labs
+        vals_ = [np.array([scripted])] + vals_
+    panel(axes[0], "A", "Referential game: task success")
+    bars_ci(axes[0], labs, vals_, [C_SIGNAL] + [C_FULL] * (len(labs) - 1),
+            "correct arrivals / episode", rot=0)
+    axes[0].axhline(2.0, color=INK, ls=":", lw=0.9)
+    axes[0].text(0.02, 0.30, "chance", transform=axes[0].transAxes, fontsize=6, color=INK2)
+    axes[0].axhline(4.0, color=MUTED, ls="--", lw=0.8)
+
+    panel(axes[1], "B", "Seeds solving the game")
+    fr = [float((v > 3.0).mean()) for v in vals_]
+    axes[1].bar(np.arange(len(labs)), fr, 0.62,
+                color=[C_SIGNAL] + [C_FULL] * (len(labs) - 1),
+                edgecolor="white", lw=0.8)
+    axes[1].set_xticks(np.arange(len(labs))); axes[1].set_xticklabels(labs, fontsize=6)
+    axes[1].set_ylabel("fraction of seeds"); axes[1].set_ylim(0, 1.05)
+    fig.tight_layout()
+    fig.savefig(f"{FIG}/fig0b_learned_referential.pdf"); plt.close(fig)
+
+    for (lab, v), pref in zip(got, [c[0] for c in conds]):
+        tag = pref.split("_")[1].capitalize()
+        num(f"Ref{tag}Arr", float(v.mean()), "{:.2f}")
+        NUM[f"Ref{tag}Solved"] = f"{int((v > 3.0).sum())}/{len(v)}"
+
+
+# ===========================================================================
+# Figure 0c -- the same audit in a world with no electric fish in it
+# ===========================================================================
+def fig_dualuse():
+    fp = "results/dualuse.json"
+    if not os.path.exists(fp):
+        return
+    d = json.load(open(fp))
+    fig, axes = plt.subplots(1, 3, figsize=(7.4, 2.5))
+
+    conds = [("full", "intact"), ("no_detect", "no detection"),
+             ("no_illum", "no illumination"), ("private", "private only"),
+             ("silent", "silent")]
+    cols = [C_FULL, C_SIGNAL, C_CUE, C_PRIVATE, MUTED]
+    got = [np.array(d["cond"][k]["collected"]) for k, _ in conds if k in d.get("cond", {})]
+    labs = [l for k, l in conds if k in d.get("cond", {})]
+    if got:
+        panel(axes[0], "A", "Items collected (trained from scratch)")
+        bars_ci(axes[0], labs, got, cols, "items / episode", rot=30)
+        num("DUFull", float(got[0].mean()))
+        num("DUSilent", float(got[-1].mean()))
+
+    if "decomp" in d:
+        keys = [("mute_both", "mute all\nthree", MUTED),
+                ("mute_self", "$-$reafference", C_PRIVATE),
+                ("mute_illum", "$-$illumination", C_CUE),
+                ("mute_detect", "$-$detection", C_SIGNAL)]
+        gs = [np.array([b["collected_target"][k]["mean"] for b in d["decomp"]])
+              for k, _, _ in keys]
+        panel(axes[1], "B", "Muting one agent: its own intake")
+        bars_ci(axes[1], [l for _, l, _ in keys], gs, [c for _, _, c in keys],
+                "$\\Delta$ items", rot=30)
+        axes[1].axhline(0, color=INK, lw=0.8)
+        for i, gg in enumerate(gs):
+            if len(gg) > 1:
+                axes[1].text(i, np.mean(gg), stars(perm_p(gg, np.zeros_like(gg))),
+                             ha="center", va="bottom", fontsize=6, color=INK)
+        tot, pri = np.mean(gs[0]), np.mean(gs[1])
+        num("DUTotal", float(tot)); num("DUPriv", float(pri))
+        num("DUSig", float(np.mean(gs[3])))
+        if abs(tot) > 1e-9:
+            num("DUPrivFrac", 100 * float(pri / tot), "{:.0f}")
+
+    if "cost" in d:
+        cs = sorted(float(k) for k in d["cost"])
+        pg = [np.mean(d["cost"][str(c) if str(c) in d["cost"] else f"{c}"]["ping"]) for c in cs]
+        panel(axes[2], "C", "Cost suppresses the ping here too")
+        axes[2].plot(cs, pg, "o-", color=C_FULL, ms=5, mfc="white", mew=1.3)
+        axes[2].set_xlabel("ping cost"); axes[2].set_ylabel("P(ping)")
+        num("DUPingLo", float(pg[0]), "{:.3f}")
+        num("DUPingHi", float(pg[-1]), "{:.3f}")
+    fig.tight_layout()
+    fig.savefig(f"{FIG}/fig0c_dualuse.pdf"); plt.close(fig)
+
+
+# ===========================================================================
 # Figure 1 -- validation and throughput
 # ===========================================================================
 def fig1():
@@ -1037,7 +1151,7 @@ def write_numbers():
 
 if __name__ == "__main__":
     load()
-    for fn in (fig_assay, fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_generalisation, write_verdicts):
+    for fn in (fig_assay, fig_learned_ref, fig_dualuse, fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_generalisation, write_verdicts):
         try:
             fn()
             print("ok", fn.__name__, flush=True)

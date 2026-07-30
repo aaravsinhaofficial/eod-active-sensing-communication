@@ -19,46 +19,65 @@ condition in which a signalling variable is *decoupled* from sensing altogether.
 
 ## Headline findings
 
-**The assays are validated first.** A Lewis signalling game is embedded in the
-same physics: an immobile sender privately observes which of two sites holds
-food, its discharges are forced onto a fixed schedule so timing carries nothing,
-and a one-bit discharge subtype is the only free channel. Crossing an informative
-against an uninformative sender, and an attentive against a deaf receiver, gives
-four dyads of known status. Only informative+attentive succeeds (4.00/4 correct
-arrivals vs 1.96 chance), and deleting a genuinely used signal costs its receiver
-172.5 in return.
+### 1. The assays are validated before they are trusted
 
-**Each diagnostic alone is foolable.** Positive signalling is 0.932 bits whether
-or not anyone listens. Causal influence is ~31 nats whether or not the channel
-carries anything. Even the payoff-ablation test fires (-72.8) for a channel of
-pure noise the receiver has organised around. Only the conjunction identifies
-communication.
+A Lewis signalling game is embedded in the same physics: an immobile sender
+privately observes which of two sites holds food, its discharges are forced onto a
+fixed schedule so timing carries nothing, and a one-bit discharge subtype is the
+only free channel. Crossing an informative against an uninformative sender, and an
+attentive against a deaf receiver, gives four dyads of known status.
 
-**Applied to the electric discharge:**
+| dyad | task success | content MI | causal influence | payoff of deleting |
+|---|---|---|---|---|
+| informative + attended | **4.00/4** | **0.932** | 31.5 | **-172.5** |
+| informative + ignored | 1.96/4 | 0.932 | **0.000** | -1.3 n.s. |
+| noise + attended | 1.93/4 | **0.001** | 31.9 | -72.8 |
+| noise + ignored | 1.89/4 | 0.001 | 0.000 | -0.2 n.s. |
 
-- *Muting is mostly blinding.* Silencing a fish costs it 0.52 food items per
-  episode; 0.51 of that is its own lost electrolocation, 0.03 the lost
-  detectability by others. The private share stays between 83% and 135% across
-  2/4/6 fish, a 100 cm arena, 1024-step episodes, and a 256-unit GRU.
-- *It passes both standard criteria and still is not communicating.* Decodable
-  information about food (dR2 = 0.156) and receiver-policy influence 13x the
-  noise floor - yet replaying, scrambling or fabricating the channel moves no
-  payoff we can resolve.
-- *Two diagnostics fail outright.* Positive signalling is **higher** in deaf
-  populations (0.152 vs 0.086). Causal influence **rises** 12-fold as the channel
-  becomes less informative, because a rare pulse is a more surprising one.
-- *The sender-shaping control must cut audibility, not reception.* Disabling
-  knollenorgans removes reception and measures free-riding (hearing fish emit
-  *less*, 0.545 vs 0.611). With reception held fixed and only audibility cut,
-  sender shaping is 0.040 - the pulse is a cue.
-- *Cost does not manufacture semantics.* Metabolic cost and eavesdropping
-  predation drive discharge rate down monotonically and crypsis works, but the
-  pulse train becomes *less* informative, even per pulse.
-- *Freeing the channel is not sufficient.* A discharge subtype decoupled from
-  sensing is used at chance rate (0.52) and deleting it changes nobody's payoff
-  in any of four ecological settings (n = 12 seeds each, no cell surviving
-  correction). What the foraging world lacks is not a channel but a task in which
-  one fish's private information is worth anything to another.
+**Every diagnostic alone is foolable.** Positive signalling is identical whether
+anyone listens. Causal influence is identical whether the channel carries
+anything. Even the payoff-ablation test fires at -72.8 for pure noise the receiver
+has organised around. Only the conjunction identifies communication.
+
+### 2. Applied to the electric discharge
+
+- **Muting is mostly blinding.** Silencing a fish costs it 0.52 items/episode;
+  0.51 is its own lost electrolocation, 0.03 the lost detectability by others. The
+  private share holds at 83-135% across 2/4/6 fish, a 100 cm arena, 1024-step
+  episodes and a 256-unit GRU.
+- **It passes both standard criteria and still is not communicating.** Decodable
+  food information (dR2 = 0.156) and receiver-policy influence 13x the noise floor
+  - yet replaying, scrambling or fabricating the channel moves no payoff we can
+  resolve.
+- **Two diagnostics fail outright.** Positive signalling is *higher* in deaf
+  populations (0.152 vs 0.086). Causal influence *rises* 12-fold as the channel
+  becomes less informative.
+- **Sender shaping needs the right control.** Disabling knollenorgans removes
+  *reception* and measures free-riding (hearing fish emit less, 0.545 vs 0.611).
+  Holding reception fixed and cutting only audibility gives 0.040 - a cue.
+- **Cost does not manufacture semantics.** Cost and eavesdropping predation drive
+  rate down monotonically and crypsis works, but the pulse train becomes *less*
+  informative, even per pulse.
+- **Freeing the channel is not sufficient.** A decoupled subtype is used at chance
+  (0.52) and deleting it changes nobody's payoff in any of four settings (12 seeds
+  each, no cell surviving correction).
+
+### 3. It is about dual use, not about fish
+
+A minimal benchmark with no fish physics - agents forage in a unit square, a
+`ping` shows the pinger nearby items, shows neighbours *their* neighbourhood, and
+is registered as an event - reproduces the decomposition: muting costs an agent
+9.89 items, **100% of it private reafference**, detection share -0.06.
+
+### 4. The optimiser is a binding constraint (stated, not hidden)
+
+Recurrent MAPPO does not solve the referential game in **36 runs at 50M steps** -
+including with a scripted honest sender, and with the Eccles et al.
+positive-signalling bias - while a hand-coded dyad gets 4.00/4 from the same
+observations. Lower action noise and a halved credit horizon do not help. So the
+measurement-side results stand independent of the learner, while the
+"cost/decoupling does not create signalling" claims are scoped to a standard
+learner and say so.
 
 ## What is here
 

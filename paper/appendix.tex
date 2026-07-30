@@ -70,6 +70,75 @@ sharp transitions.}
 \label{fig:regimes}
 \end{figure}
 
+\section{Why the learned referential game fails}
+\label{app:optimiser}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.72\textwidth]{../figs/fig0b_learned_referential.pdf}
+\caption{A hand-coded dyad solves the referential game from the same
+observations; twelve seeds each of three learned configurations, including one
+with a published bias designed for this problem, do not leave chance.}
+\label{fig:learnedref}
+\end{figure}
+
+The hand-coded receiver reads the subtype and the two site bearings out of the
+observation vector and reaches the correct site on every trial, so the
+information is present and a competent policy exists inside the representable
+class. To check that the learned failure is not an artefact of exploration noise
+or of the delay between committing to a direction and arriving, we re-ran the
+receiver-only condition (scripted honest sender) with the initial policy standard
+deviation on the steering action reduced from $e^{-0.5}$ to $e^{-2}$, and with the
+two sites moved from \SI{60}{\centi\metre} apart at a range of
+\SI{49}{\centi\metre} to \SI{40}{\centi\metre} apart at a range of
+\SI{25}{\centi\metre}, which roughly halves the credit-assignment horizon and
+doubles the number of trials per episode. Neither change moves performance off
+chance:
+
+\begin{center}\small
+\begin{tabular}{lrr}
+\toprule
+Configuration & arrivals / episode & chance \\
+\midrule
+far sites, low steering noise & 2.01 of 4 & 2.0 \\
+near sites, default noise & 3.00 of 6 & 3.0 \\
+near sites, low steering noise & 3.07 of 6 & 3.0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+We therefore attribute the failure to the difficulty of discovering a
+multiplicative interaction between a single binary input and a continuous
+steering policy under policy-gradient updates, rather than to the task geometry
+or the exploration schedule.
+
+\section{The decoupled signalling variable}
+\label{app:decoupled}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig9_decoupled.pdf}
+\caption{A discharge subtype decoupled from sensing, crossed with competitive and
+cooperative harvests and with a sparse-patch task in which finding food is the
+bottleneck. (C) deletes the subtype while leaving the pulse, and therefore all
+sensing, completely intact --- the manipulation the coupled channel does not
+admit.}
+\label{fig:decoupled}
+\end{figure}
+
+\section{The dual-use benchmark}
+\label{app:dualuse}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig0c_dualuse.pdf}
+\caption{A minimal dual-use foraging world with no fish physics: a \textsc{ping}
+senses, illuminates neighbours and is registered as an event. The muting effect
+decomposes the same way as in the electric-fish environment, and cost suppresses
+the ping the same way.}
+\label{fig:dualuse}
+\end{figure}
+
 \input{limitations}
 
 \input{methods_body}

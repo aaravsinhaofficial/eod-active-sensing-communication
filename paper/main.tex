@@ -134,46 +134,77 @@ attending to has disappeared. This confound is not specific to the model; it is
 the reason \eod-ablation experiments in real fish are hard to interpret.
 
 \paragraph{Contributions.} We make the three consequences independently
-switchable and ask what changes.
-
-\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
-\item A \textbf{channel algebra} for dual-use signals. Reafference, illumination
-      and detection become three binary masks applied to one motor act, letting
-      us construct pulses that are private, exploitable-but-undetectable,
-      detectable-but-uninformative, phantom (heard though never emitted), replayed
-      from a different context, or scrambled in time or sender identity.
-\item An \textbf{interventional} measure of causal influence. Because we own the
-      simulator, the counterfactual in \citet{jaques2019social} can be evaluated
-      by the $\dosim$ operator directly---re-rendering the receiver's sensory
-      input under $\dosim(\text{emit}_j{=}1)$ and $\dosim(\text{emit}_j{=}0)$ with
-      every other cause held on its factual path---rather than approximated with a
-      learned model of other agents.
-\item A \textbf{cue/signal discriminator}. Following
-      \citet{scottphillips2008defining}, a signal requires that production be
-      shaped by its effect on receivers. We train matched populations in worlds
-      whose only difference is whether receivers can hear at all, and measure the
-      divergence between the resulting emission policies against the
-      seed-to-seed divergence within each world---a Sender Shaping Index (SSI).
-\item An \textbf{economics} for the discharge. The original reward has no
-      \eod\ term, so pulses are free. We add a metabolic cost per discharge,
-      predators that localise prey by their discharges, cooperative versus
-      competitive harvests, tunable social range, and persistent identity, and
-      map the resulting regimes.
-\item A \textbf{positive control}. Because a negative result is only as strong as
-      the positive control beside it, we also give the agents a signalling
-      variable that is \emph{partially decoupled} from sensing---a discharge
-      subtype that rides on the pulse, so sending still costs a pulse, but whose
-      value changes nothing about the emitter's own electric image, nothing
-      about how the pulse illuminates neighbours, and nothing about predator
-      detectability. This is the manipulation that distinguishes ``pressure does
-      not create signals here'' from ``signals cannot be measured here''.
-\end{enumerate}
+switchable and ask what changes. (i) A \textbf{channel algebra} for dual-use
+signals: reafference, illumination and detection become three masks on one motor
+act, letting us build pulses that are private, exploitable-but-undetectable,
+detectable-but-uninformative, phantom, replayed from another context, or scrambled
+in time or sender identity. (ii) An \textbf{interventional} causal influence:
+because we own the simulator, the counterfactual of \citet{jaques2019social} is
+evaluated with the $\dosim$ operator directly---re-rendering the receiver's input
+under $\dosim(e_j{=}1)$ and $\dosim(e_j{=}0)$ with every other cause on its
+factual path---rather than approximated with a model of other agents. (iii) A
+\textbf{cue/signal discriminator}: we train matched populations whose only
+difference is whether the focal agent can be \emph{heard}, holding its own
+reception fixed, and measure the divergence of their emission policies against
+seed-to-seed divergence within each world. (iv) An \textbf{economics}: metabolic
+cost per discharge, predators that localise prey by discharges, cooperative versus
+competitive harvests, tunable social range, persistent identity. (v) An
+\textbf{assay validation}: dyads that are communicating by construction, against
+which every metric is checked before it is trusted, plus a \textbf{decoupled
+channel} and a \textbf{non-fish dual-use benchmark} to separate what is about
+electric fish from what is about dual use.
 
 \paragraph{A note on wording.} Our populations adapt within a training run by
 policy-gradient learning under a fixed reward; we do not run an evolutionary
 outer loop over heritable traits. We therefore write \emph{emerge under learning}
 throughout, and reserve claims about evolutionary history for the Discussion,
 where we say explicitly what our design can and cannot license.
+
+
+\section{Related work}
+
+\paragraph{Measuring emergent communication.} Most work equips agents with a
+dedicated, costless channel that has no other use, so that any use of it is
+communicative by construction and the open question is what code appears
+\citep{foerster2016learning,mordatch2018emergence,lazaridou2017multi,lazaridou2018emergence}.
+Within that setting, \citet{lowe2019pitfalls} showed that message--behaviour
+association is insufficient evidence and introduced positive signalling and
+positive listening; \citet{jaques2019social} proposed causal influence, estimated
+through a learned model of other agents; \citet{eccles2019biases} added training
+biases that make communication more likely to appear;
+\citet{bogin2018emergence,chaabouni2020compositionality} study compositionality
+and context-independence. Our contribution to this line is not another metric but
+an audit: we show that these diagnostics are individually foolable, exhibit a case
+where positive signalling is \emph{higher} in a population whose receivers are
+deaf and where causal influence \emph{rises} as the channel becomes less
+informative, and validate the whole battery against dyads of known communication
+status before applying it.
+
+\paragraph{Dual-use channels, and the cue/signal distinction.} Our setting
+inverts the usual one: the channel is a physical act with a large private
+benefit, so the question is whether \emph{any} of its use is communicative---the
+situation for active sonar, a robot's laser sweep, or any action that both senses
+and is observable, and closer to the biological norm, since signals are generally
+thought to be ritualised from behaviours that had other functions.
+\citet{noukhovitch2021emergent} show that influence under competition can reflect
+manipulation or cue-reading, the same identification problem we attack with the
+payoff and production tests. The distinction we operationalise is
+\citeauthor{scottphillips2008defining}'s: a signal's production has been shaped by
+its effect on receivers, a cue's has not
+\citep{scottphillips2008defining,maynardsmith2003animal}. Costly-signalling theory
+\citep{zahavi1975mate,grafen1990biological,szamado2011cost} explains how honesty is
+maintained in a signal that exists; our cost sweep asks whether cost brings one
+into being, and finds it does not.
+
+\paragraph{Electric fish.} \citet{singh2025active} built the reference simulator
+and training setup we reimplement, reporting that discharges shape group foraging
+and spacing; our departure is definitional and causal, since their definition is
+effect-based and their one intervention removes three consequences at once. The
+biology we add is established: collective electrosensing
+\citep{pedraja2024collective}, corollary-discharge cancellation
+\citep{wallach2023internal}, discharge energetics
+\citep{salazar2013energetics,markham2009circadian}, and electroreceptive
+eavesdroppers \citep{stoddard1999predation,hanika1999electric}.
 
 \input{results}
 

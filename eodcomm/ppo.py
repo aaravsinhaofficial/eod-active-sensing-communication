@@ -35,6 +35,15 @@ class PPOConfig:
     max_grad_norm: float = 0.5
     rollout: int = 64
     log_std_init: float = -0.5
+    # Eccles et al. (2019) positive-signalling bias.  Emergent communication has
+    # a chicken-and-egg problem: a sender has no gradient toward an informative
+    # message until a receiver attends to it, and a receiver has none toward
+    # attending until the message is informative.  This auxiliary loss pushes the
+    # message head to be confident given the state but varied across states,
+    # which breaks the deadlock from the sender's side without telling it what to
+    # say.
+    ps_bias: float = 0.0
+    ps_target_entropy: float = 0.5
 
 
 class ActorCritic(nn.Module):
@@ -230,11 +239,21 @@ class MAPPO:
                 vl = F.mse_loss(v_n, ret[:, aidx])
 
                 ent_all, ent_d = entropy(ls, lg)
+                ps_loss = torch.zeros((), device=lg.device)
+                if cfg.ps_bias > 0 and lg.shape[-1] >= 3:
+                    # index 2 is the discharge-subtype (message) head
+                    p_msg = torch.sigmoid(lg[..., 2])
+                    pbar = p_msg.mean()
+                    H_avg = -(pbar * torch.log(pbar + 1e-8)
+                              + (1 - pbar) * torch.log(1 - pbar + 1e-8))
+                    H_cond = ent_d[..., 2].mean()
+                    # want high marginal entropy, low conditional entropy
+                    ps_loss = -(H_avg - H_cond)
                 # the discharge decision gets its own exploration bonus: without it
                 # the emit head collapses long before foraging is learned
                 ent = ent_all.mean() + cfg.ent_coef_emit * ent_d[..., 0].mean()
 
-                loss = pl + cfg.vf_coef * vl - cfg.ent_coef * ent
+                loss = pl + cfg.vf_coef * vl - cfg.ent_coef * ent + cfg.ps_bias * ps_loss
                 self.opt.zero_grad(set_to_none=True)
                 loss.backward()
                 nn.utils.clip_grad_norm_(self.net.parameters(), cfg.max_grad_norm)

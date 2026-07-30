@@ -110,10 +110,16 @@ def collect(tr, env, n_steps: int, channel: ChannelSpec | None = None, seed: int
         rec["pos"].append(env.pos.clone())
         rec["theta"].append(env.theta.clone())
         rec["size"].append(env.size.clone())
-        d_food = torch.cdist(env.pos, env.food)
-        d_food = torch.where(env.food_alive[:, None, :], d_food, torch.full_like(d_food, 1e6))
-        rec["food_near10"].append((d_food < 10.0).sum(-1).to(torch.float32))
-        if env.cfg.predation > 0 and env.cfg.n_pred > 0:
+        food = getattr(env, "food", None)
+        if food is None:
+            rec["food_near10"].append(torch.zeros((B, F), device=env.dev))
+        else:
+            d_food = torch.cdist(env.pos, food)
+            d_food = torch.where(env.food_alive[:, None, :], d_food,
+                                 torch.full_like(d_food, 1e6))
+            near_r = 10.0 if getattr(env.cfg, "arena_cm", None) else 0.2
+            rec["food_near10"].append((d_food < near_r).sum(-1).to(torch.float32))
+        if getattr(env.cfg, "predation", 0) > 0 and getattr(env.cfg, "n_pred", 0) > 0:
             rec["pred_dist"].append(torch.cdist(env.pos, env.pred_pos).min(-1).values)
         else:
             rec["pred_dist"].append(torch.full((B, F), 1e6, device=env.dev))
