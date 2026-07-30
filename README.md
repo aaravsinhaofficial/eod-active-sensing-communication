@@ -19,29 +19,46 @@ condition in which a signalling variable is *decoupled* from sensing altogether.
 
 ## Headline findings
 
-- **Muting is mostly blinding.** Silencing a fish costs it 0.52 food items per
-  episode; 0.51 of that is the loss of its own electrolocation. The loss of
-  detectability by others costs +0.03 (n.s.).
-- **The channel passes every standard test for communication and still is not
-  communicating.** It carries decodable information about food (ΔR² = 0.16) and
-  moves receiver policies 13× more than sensory noise — yet replaying,
-  scrambling or fabricating it changes nobody's payoff within our resolution.
-- **Two standard diagnostics fail outright.** Positive signalling is *higher* in
-  populations whose receivers are deaf (0.152 vs 0.086) — a fish modulates its
-  probe rate whether or not anyone listens. And causal influence *rises* 12-fold
-  as the channel becomes less informative, because a rare pulse is a more
-  surprising one.
-- **Cost does not manufacture semantics.** Metabolic cost and eavesdropping
-  predation drive discharge rate down monotonically and crypsis works, but the
-  pulse train becomes *less* informative, even per pulse.
-- **The sender-shaping control has to cut audibility, not reception.** Disabling
+**The assays are validated first.** A Lewis signalling game is embedded in the
+same physics: an immobile sender privately observes which of two sites holds
+food, its discharges are forced onto a fixed schedule so timing carries nothing,
+and a one-bit discharge subtype is the only free channel. Crossing an informative
+against an uninformative sender, and an attentive against a deaf receiver, gives
+four dyads of known status. Only informative+attentive succeeds (4.00/4 correct
+arrivals vs 1.96 chance), and deleting a genuinely used signal costs its receiver
+172.5 in return.
+
+**Each diagnostic alone is foolable.** Positive signalling is 0.932 bits whether
+or not anyone listens. Causal influence is ~31 nats whether or not the channel
+carries anything. Even the payoff-ablation test fires (-72.8) for a channel of
+pure noise the receiver has organised around. Only the conjunction identifies
+communication.
+
+**Applied to the electric discharge:**
+
+- *Muting is mostly blinding.* Silencing a fish costs it 0.52 food items per
+  episode; 0.51 of that is its own lost electrolocation, 0.03 the lost
+  detectability by others. The private share stays between 83% and 135% across
+  2/4/6 fish, a 100 cm arena, 1024-step episodes, and a 256-unit GRU.
+- *It passes both standard criteria and still is not communicating.* Decodable
+  information about food (dR2 = 0.156) and receiver-policy influence 13x the
+  noise floor - yet replaying, scrambling or fabricating the channel moves no
+  payoff we can resolve.
+- *Two diagnostics fail outright.* Positive signalling is **higher** in deaf
+  populations (0.152 vs 0.086). Causal influence **rises** 12-fold as the channel
+  becomes less informative, because a rare pulse is a more surprising one.
+- *The sender-shaping control must cut audibility, not reception.* Disabling
   knollenorgans removes reception and measures free-riding (hearing fish emit
   *less*, 0.545 vs 0.611). With reception held fixed and only audibility cut,
-  sender shaping is 0.04 — the pulse is a cue.
-- **Positive control.** Freeing one bit of discharge subtype from the sensory
-  function produces a payoff-relevant social channel in one of four ecological
-  settings: sparse patches under competition, where private information is
-  scarcest.
+  sender shaping is 0.040 - the pulse is a cue.
+- *Cost does not manufacture semantics.* Metabolic cost and eavesdropping
+  predation drive discharge rate down monotonically and crypsis works, but the
+  pulse train becomes *less* informative, even per pulse.
+- *Freeing the channel is not sufficient.* A discharge subtype decoupled from
+  sensing is used at chance rate (0.52) and deleting it changes nobody's payoff
+  in any of four ecological settings (n = 12 seeds each, no cell surviving
+  correction). What the foraging world lacks is not a channel but a task in which
+  one fish's private information is worth anything to another.
 
 ## What is here
 
