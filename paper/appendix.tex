@@ -70,6 +70,17 @@ sharp transitions.}
 \label{fig:regimes}
 \end{figure}
 
+\section{The validation dyads in detail}
+\label{app:assay}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig0_assay_validation.pdf}
+\caption{Four dyads in the referential game. Only \emph{info+attend} is
+communicating; the other three each satisfy some subset of the diagnostics.}
+\label{fig:assay}
+\end{figure}
+
 \section{Why the learned referential game fails}
 \label{app:optimiser}
 
@@ -111,6 +122,44 @@ We therefore attribute the failure to the difficulty of discovering a
 multiplicative interaction between a single binary input and a continuous
 steering policy under policy-gradient updates, rather than to the task geometry
 or the exploration schedule.
+
+\section{Generalisation of the decomposition}
+\label{app:gen}
+\input{gen_table}
+
+\section{Message content and sender shaping}
+\label{app:content}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig4_content.pdf}
+\caption{What the pulse train carries. (A) Positive signalling, conditioned on
+distance-to-neighbour decile. (B) Cross-validated decoding from receiver-observable
+pulse counts only, minus the time-shifted baseline. (C) Discharge probability by
+food proximity.}
+\label{fig:content}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig6_ssi.pdf}
+\caption{Sender shaping measured with reception held fixed. (A) SSI from the yoked
+contrast, which cuts audibility only, beside the confounded deaf contrast, which
+cuts reception. (B) Discharge rate, live versus yoked. (C) The free-riding effect
+that drives the deaf contrast.}
+\label{fig:ssi}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{../figs/fig5_listening.pdf}
+\caption{Positive listening, and why it is not enough. (A) Interventional causal
+influence against its noise floor (log scale). (B) Positive listening against a
+rate-matched time-shift null and against silence, which is out of distribution.
+(C) Phantom-pulse dose-response. (D) As metabolic cost rises, causal influence per
+discharge increases while decodable content falls.}
+\label{fig:listening}
+\end{figure}
 
 \section{The decoupled signalling variable}
 \label{app:decoupled}

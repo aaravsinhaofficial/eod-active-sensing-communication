@@ -88,6 +88,15 @@ def eval_run(path, batch=192, steps=512, seed=7, do_channels=True):
         res, _ = channel_battery(tr, env, n_steps=steps, seed=seed)
         out["muting_decomposition"] = decompose_muting(res)
         out["signal_value"] = signal_value(res)
+        # The cross-arena replay transmits the train the same policy produced in
+        # an independently drawn world while this world is held fixed: that is
+        # exactly the natural indirect effect, and unlike deletion it keeps the
+        # message inside its own marginal.
+        out["nie"] = {
+            "receivers": paired_diff(res, "replay_cross", "intact", "reward_others"),
+            "sender": paired_diff(res, "replay_cross", "intact", "reward_target"),
+            "context_swapped": paired_diff(res, "replay_context", "intact", "reward_others"),
+        }
         # phantom dose-response and the rest of the battery, minus the bulky
         # per-arena arrays that were only needed for the paired statistics
         out["channels"] = {k: {kk: vv for kk, vv in v.items() if kk != "_per_arena"}

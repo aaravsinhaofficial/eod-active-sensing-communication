@@ -111,6 +111,69 @@ def num(k, v, fmt="{:.2f}"):
 
 
 # ===========================================================================
+# Figure 0a -- the discrimination matrix: which diagnostic fires where
+# ===========================================================================
+def fig_discrimination():
+    fp = "results/assay_validation.json"
+    if not os.path.exists(fp):
+        return
+    rows = json.load(open(fp))
+    key = {(r["script"], r["listen"]): r for r in rows}
+    order = [("honest", True, "informative\n+ attended"),
+             ("honest", False, "informative\n+ ignored"),
+             ("random", True, "noise\n+ attended"),
+             ("random", False, "noise\n+ ignored")]
+    truth = [True, False, False, False]     # which dyad is actually communicating
+    metrics = [
+        ("positive signalling", lambda r: r["content_mi"], 0.05),
+        ("causal influence", lambda r: r["cie"], 1.0),
+        ("payoff of deletion", lambda r: abs(r["kill_d_receiver"]), 5.0),
+        ("natural indirect effect", lambda r: abs(r["nie"]), 5.0),
+    ]
+    M_ = np.zeros((len(metrics), len(order)))
+    fires = np.zeros_like(M_, dtype=bool)
+    for i, (_, fn, thr) in enumerate(metrics):
+        vals_ = np.array([fn(key[(a, b)]) for a, b, _ in order])
+        M_[i] = vals_ / max(vals_.max(), 1e-12)
+        fires[i] = vals_ > thr
+
+    fig, ax = plt.subplots(figsize=(5.6, 2.9))
+    im = ax.imshow(M_, cmap="Blues", vmin=0, vmax=1, aspect="auto")
+    ax.set_xticks(range(len(order)))
+    ax.set_xticklabels([l for _, _, l in order], fontsize=6.6)
+    ax.set_yticks(range(len(metrics)))
+    ax.set_yticklabels([m for m, _, _ in metrics], fontsize=7)
+    ax.grid(False)
+    for i in range(M_.shape[0]):
+        for j in range(M_.shape[1]):
+            ok = (fires[i, j] == truth[j])
+            ax.text(j, i, ("fires" if fires[i, j] else "silent"),
+                    ha="center", va="center", fontsize=6.2,
+                    color="white" if M_[i, j] > 0.5 else INK)
+            if not ok:
+                ax.add_patch(plt.Rectangle((j - .5, i - .5), 1, 1, fill=False,
+                                           edgecolor=SERIES[1], lw=2.4, zorder=5))
+    ax.set_title("Only the mediation measure fires exactly where it should",
+                 loc="left", fontsize=8, pad=6)
+    ax.text(0.0, -0.30, "orange outline = wrong answer;  column 1 is the only "
+            "dyad that is communicating", transform=ax.transAxes, fontsize=6, color=INK2)
+    fig.colorbar(im, ax=ax, fraction=0.03, pad=0.02).ax.tick_params(labelsize=5.5)
+    fig.tight_layout()
+    fig.savefig(f"{FIG}/fig0a_discrimination.pdf"); plt.close(fig)
+
+    h = key[("honest", True)]
+    num("NIEHonest", h["nie"], "{:.1f}")
+    num("NIEHonestLo", h["nie_lo"], "{:.1f}")
+    num("NIEHonestHi", h["nie_hi"], "{:.1f}")
+    num("NIENoise", key[("random", True)]["nie"], "{:.2f}")
+    num("NIEDeaf", key[("honest", False)]["nie"], "{:.2f}")
+    num("KillNoise", key[("random", True)]["kill_d_receiver"], "{:.1f}")
+    nerr = int(sum(1 for i in range(M_.shape[0]) for j in range(M_.shape[1])
+                   if fires[i, j] != truth[j]))
+    NUM["DiscrimErrors"] = str(nerr)
+
+
+# ===========================================================================
 # Figure 0b -- can the optimiser invent the code, or only read one?
 # ===========================================================================
 def fig_learned_ref():
@@ -983,6 +1046,24 @@ def write_generalisation():
     NUM["GenPrivHi"] = f"{hi:.0f}"
 
 
+def write_nie():
+    """The mediated effect in the naturalistic world, against its detection floor."""
+    runs = group("A_full")
+    v = [r["nie"]["receivers"]["mean"] for r in runs if "nie" in r]
+    vs = [r["nie"]["sender"]["mean"] for r in runs if "nie" in r]
+    base = [r["channels"]["intact"]["reward_others"] for r in runs if "channels" in r]
+    if not v:
+        return
+    m, lo, hi = boot_ci(np.array(v))
+    num("FishNIE", m, "{:.2f}")
+    num("FishNIELo", lo, "{:.2f}")
+    num("FishNIEHi", hi, "{:.2f}")
+    num("FishNIESender", float(np.mean(vs)), "{:.2f}")
+    num("FishNIEPct", 100 * abs(m) / max(np.mean(base), 1e-9), "{:.2f}")
+    if "NIEHonest" in NUM:
+        num("NIERatio", abs(float(NUM["NIEHonest"])) / max(abs(m), 1e-9), "{:.0f}")
+
+
 def write_verdicts():
     """Generate the conditional prose that depends on how the results came out.
 
@@ -1100,30 +1181,30 @@ def write_verdicts():
 
     # --- abstract ----------------------------------------------------------
     NUM["ABSTRACTRESULTS"] = (
-        "We first validate the assays on dyads that are communicating by "
-        "construction: in a referential game embedded in the same physics they "
-        "separate informative from uninformative senders and attentive from deaf "
-        "receivers, and deleting a genuinely used signal costs its receiver "
-        "\\AssayKillHonest\\ in return. Each assay alone, however, is foolable --- "
-        "positive signalling is just as high when nobody listens, and causal "
-        "influence just as high when the channel carries nothing --- so only their "
-        "conjunction identifies communication. Applied to the electric discharge, "
-        "silencing a fish costs it \\MuteTargetTotal\\ food items per episode, of "
-        "which \\MuteTargetPriv\\ is the loss of its own electrolocation and "
-        "\\MuteTargetSig\\ the loss of its detectability by others; the private "
-        "share stays between \\GenPrivLo\\% and \\GenPrivHi\\% across group sizes, "
-        "arena scales, episode lengths and network widths. The public channel "
-        "satisfies both standard criteria --- decodable information about food "
-        "($\\Delta R^2=\\ContentFood$) and receiver-policy influence "
-        "\\CIERatio$\\times$ the noise floor --- yet replaying, scrambling or "
-        "fabricating it moves no payoff we can resolve, sender shaping is "
-        "\\SSIYokeZero\\ once reception is held fixed and only audibility is cut, "
-        "and metabolic cost and eavesdropping predation regulate discharge rate "
-        "while making the pulse train \\emph{less} informative. Freeing one bit of "
-        "discharge subtype from the sensory function does not change this. A system "
-        "can pass every standard diagnostic for emergent communication and not be "
-        "communicating; what the discharge lacks is not a channel but a task in "
-        "which its private information is worth anything to anyone else.")
+        "Positive signalling is \\AssayMIHonest\\ bits for a "
+        "sender that nobody listens to, and causal influence "
+        "(\\AssayCIEListen\\ nats) and payoff-ablation (\\KillNoise) both fire for a "
+        "channel that carries no information at all, because deleting a message "
+        "takes the receiver outside its own training distribution. We therefore "
+        "define communication as a \\emph{natural indirect effect}: the sender's "
+        "private state acting on the receiver's payoff through the message, "
+        "estimated by transmitting the message the sender would have produced in "
+        "an independently drawn world while the true world is held fixed. We prove "
+        "it is zero whenever the message is independent of the sender's state or "
+        "the receiver ignores it, and it is the only one of the four measures that "
+        "answers all four validation dyads correctly (\\NIEHonest\\ where "
+        "communication exists, \\NIENoise\\ and \\NIEDeaf\\ where it does not). "
+        "Applied to the electric organ discharge, the picture inverts the received "
+        "one. Silencing a fish costs it \\MuteTargetTotal\\ food items per episode, "
+        "of which \\MuteTargetPriv\\ is its own lost electrolocation and "
+        "\\MuteTargetSig\\ its lost detectability by others, a split that holds "
+        "between \\GenPrivLo\\% and \\GenPrivHi\\% across group sizes, arena scales, "
+        "episode lengths and network widths, and that reappears in a minimal "
+        "dual-use benchmark containing no fish physics at all. The channel carries "
+        "decodable information about food ($\\Delta R^2=\\ContentFood$) and moves "
+        "receiver policies \\CIERatio$\\times$ the noise floor, yet its mediated "
+        "effect is indistinguishable from zero. It is an exploited cue, not a "
+        "signal.")
 
 
 def write_numbers():
@@ -1151,7 +1232,7 @@ def write_numbers():
 
 if __name__ == "__main__":
     load()
-    for fn in (fig_assay, fig_learned_ref, fig_dualuse, fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_generalisation, write_verdicts):
+    for fn in (fig_assay, fig_discrimination, fig_learned_ref, fig_dualuse, fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_generalisation, write_nie, write_verdicts):
         try:
             fn()
             print("ok", fn.__name__, flush=True)

@@ -69,6 +69,29 @@ def run_condition(script, listen, batch=256, steps=512, seed=0):
     pl, pz = positive_listening(tr, env, n_steps=96, seed=seed + 2)
     out["pl_shift"] = float(pl)
 
+    # --- mediation: the natural indirect effect ----------------------------
+    # Resample the referent, recompute the message from it, transmit that, and
+    # leave the true referent (and so every non-message pathway) untouched.  The
+    # message stays inside its own marginal distribution throughout, which is
+    # what distinguishes this from deleting it.
+    cfg_m = EnvConfig(batch=batch, ref_scripted=script, ref_mediate=True, **BASE)
+    env_m = FishEnv(cfg_m)
+    net_m = ScriptedReferentialNet(env_m.obs_dim, env_m.F, PPOConfig(gru=8),
+                                   n_disc=env_m.n_disc, listen=listen)
+    tr_m = ScriptedRunner(env_m, net_m)
+    rec_m = collect(tr_m, env_m, steps, seed=seed)
+    nie = float(rec_m["rew"][:, :, 1].sum(0).mean()) - out["receiver_return"]
+    a_ = rec_m["rew"][:, :, 1].sum(0).cpu().numpy()
+    b_ = rec["rew"][:, :, 1].sum(0).cpu().numpy()
+    rng2 = np.random.default_rng(1)
+    bs = (a_[rng2.integers(0, len(a_), (4000, len(a_)))].mean(1)
+          - b_[rng2.integers(0, len(b_), (4000, len(b_)))].mean(1))
+    out["nie"] = nie
+    out["nie_lo"], out["nie_hi"] = float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5))
+    out["nie_arrivals"] = float(rec_m["arrived"][:, :, 1].float().sum(0).mean())
+    del tr_m, env_m
+    torch.cuda.empty_cache()
+
     # --- payoff consequence of deleting the subtype ------------------------
     res = {}
     res["intact"], _ = evaluate_channel(tr, env, None, steps, seed, target=0)
@@ -98,7 +121,8 @@ if __name__ == "__main__":
                   f"arrivals={r['arrivals_per_ep']:.2f}/4 return={r['receiver_return']:6.1f} "
                   f"MI={r['content_mi']:.4f}(null {r['content_null']:.4f}) "
                   f"CIE={r['cie']:.4f}(null {r['cie_null']:.5f}) PL={r['pl_shift']:.4f} "
-                  f"kill_dR={r['kill_d_receiver']:+.2f} [{r['kill_lo']:+.2f},{r['kill_hi']:+.2f}]",
+                  f"kill_dR={r['kill_d_receiver']:+.2f}  NIE={r['nie']:+.2f} "
+                  f"[{r['nie_lo']:+.2f},{r['nie_hi']:+.2f}]",
                   flush=True)
     os.makedirs("results", exist_ok=True)
     with open("results/assay_validation.json", "w") as f:

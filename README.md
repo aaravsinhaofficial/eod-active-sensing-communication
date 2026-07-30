@@ -1,83 +1,76 @@
-# When does active sensing become communication?
+# Communication is a mediated effect
 
-Code and results for a study of when an electric organ discharge (EOD) — a pulse
-a weakly electric fish produces to *see* — becomes a *signal*.
+Separating signals from exploited cues in dual-use action channels, with an
+application to active electrosensing.
 
-Every EOD does three things at once:
+An action that both senses and broadcasts is hard to classify. A weakly electric
+fish's discharge illuminates its own surroundings *and* announces its presence to
+anyone with the receptors to detect it. The same structure arises for active
+sonar, a robot's laser sweep, or any observable act of sensing.
 
-| consequence | who benefits | what it is |
-|---|---|---|
-| **reafference** — the pulse casts an electric image on the emitter's own mormyromasts | emitter | active electrolocation |
-| **illumination** — the same field casts images on a *neighbour's* mormyromasts | neighbour | an exploitable **cue** |
-| **detection** — the pulse fires the neighbour's knollenorgans | neighbour | a candidate **signal** |
+## The problem with the standard diagnostics
 
-Silencing a fish — the standard intervention, and the one used by
-[Singh, Johnson-Yu et al. (2025)](https://arxiv.org/abs/2511.08436) — removes all
-three at once, so the resulting behavioural change cannot be attributed to any of
-them. This repository makes the three independently switchable, and adds a fourth
-condition in which a signalling variable is *decoupled* from sensing altogether.
+Three measures are in common use, and **each is individually foolable**. We show
+this on dyads whose communication status is known by construction — a Lewis
+signalling game embedded in the simulator, with an immobile sender, a forced pulse
+schedule so timing carries nothing, and a one-bit subtype as the only free channel.
 
-## Headline findings
-
-### 1. The assays are validated before they are trusted
-
-A Lewis signalling game is embedded in the same physics: an immobile sender
-privately observes which of two sites holds food, its discharges are forced onto a
-fixed schedule so timing carries nothing, and a one-bit discharge subtype is the
-only free channel. Crossing an informative against an uninformative sender, and an
-attentive against a deaf receiver, gives four dyads of known status.
-
-| dyad | task success | content MI | causal influence | payoff of deleting |
+| dyad | positive signalling | causal influence | payoff of deletion | **NIE (ours)** |
 |---|---|---|---|---|
-| informative + attended | **4.00/4** | **0.932** | 31.5 | **-172.5** |
-| informative + ignored | 1.96/4 | 0.932 | **0.000** | -1.3 n.s. |
-| noise + attended | 1.93/4 | **0.001** | 31.9 | -72.8 |
-| noise + ignored | 1.89/4 | 0.001 | 0.000 | -0.2 n.s. |
+| informative + attended | 0.934 | 31.4 | −173 | **−95.5** |
+| informative + ignored | 0.934 ✗ | 0.000 | −0.08 | −0.90 |
+| noise + attended | 0.0002 | 31.3 ✗ | −75.5 ✗ | −0.27 |
+| noise + ignored | 0.0002 | 0.000 | +0.78 | −0.32 |
 
-**Every diagnostic alone is foolable.** Positive signalling is identical whether
-anyone listens. Causal influence is identical whether the channel carries
-anything. Even the payoff-ablation test fires at -72.8 for pure noise the receiver
-has organised around. Only the conjunction identifies communication.
+Positive signalling is satisfied by a sender nobody listens to. Causal influence
+is satisfied by a receiver attending to noise. Ablation fires for a channel
+carrying nothing — because deleting a message takes the receiver *outside its own
+training distribution*.
 
-### 2. Applied to the electric discharge
+## The measure
 
-- **Muting is mostly blinding.** Silencing a fish costs it 0.52 items/episode;
-  0.51 is its own lost electrolocation, 0.03 the lost detectability by others. The
-  private share holds at 83-135% across 2/4/6 fish, a 100 cm arena, 1024-step
+Communication is a **natural indirect effect**: the sender's private state acting
+on the receiver's payoff *through* the message.
+
+> NIE = E[ u_R(s, M(s')) − u_R(s, M(s)) ],  s' ~ p(S) drawn independently
+
+Hold the world at `s`, so every direct pathway is untouched, and transmit the
+message the sender *would have* produced in an independently drawn world `s'`.
+Because `M(s')` comes from the message's own marginal, the receiver never leaves
+distribution — the only thing broken is the correspondence between message and
+world.
+
+We prove it is zero whenever the message is independent of the sender's state
+(Prop. 1) or the receiver ignores it (Prop. 2), and that deletion is *not*
+equivalent (Prop. 3, with the counterexample realised above). It is the only one
+of the four measures that answers all four validation dyads correctly.
+
+## Applied to the electric discharge
+
+- **Muting is mostly blinding.** Silencing a fish costs it food; the overwhelming
+  majority is its own lost electrolocation, not lost detectability by others. The
+  private share holds at 83–135% across 2/4/6 fish, a 100 cm arena, 1024-step
   episodes and a 256-unit GRU.
-- **It passes both standard criteria and still is not communicating.** Decodable
-  food information (dR2 = 0.156) and receiver-policy influence 13x the noise floor
-  - yet replaying, scrambling or fabricating the channel moves no payoff we can
-  resolve.
-- **Two diagnostics fail outright.** Positive signalling is *higher* in deaf
-  populations (0.152 vs 0.086). Causal influence *rises* 12-fold as the channel
-  becomes less informative.
-- **Sender shaping needs the right control.** Disabling knollenorgans removes
-  *reception* and measures free-riding (hearing fish emit less, 0.545 vs 0.611).
-  Holding reception fixed and cutting only audibility gives 0.040 - a cue.
+- **The channel passes both standard criteria** — decodable food information
+  (ΔR² = 0.156), receiver-policy influence 13× the noise floor — **yet its
+  mediated effect is 0.49% of receiver return, CI spanning zero**, against a
+  demonstrated detection floor of −95.5. An exploited cue, not a signal.
+- **Two diagnostics fail outright here too.** Positive signalling is *higher* in
+  deaf populations (0.152 vs 0.086); causal influence *rises* 12-fold as the
+  channel becomes less informative.
 - **Cost does not manufacture semantics.** Cost and eavesdropping predation drive
-  rate down monotonically and crypsis works, but the pulse train becomes *less*
-  informative, even per pulse.
-- **Freeing the channel is not sufficient.** A decoupled subtype is used at chance
-  (0.52) and deleting it changes nobody's payoff in any of four settings (12 seeds
-  each, no cell surviving correction).
+  rate down and crypsis works, but the train becomes *less* informative per pulse.
+- **It is about dual use, not fish.** A minimal benchmark with no fish physics
+  reproduces the decomposition: 100% private share, detection share −0.06.
 
-### 3. It is about dual use, not about fish
+## An honest bound on the learner
 
-A minimal benchmark with no fish physics - agents forage in a unit square, a
-`ping` shows the pinger nearby items, shows neighbours *their* neighbourhood, and
-is registered as an event - reproduces the decomposition: muting costs an agent
-9.89 items, **100% of it private reafference**, detection share -0.06.
-
-### 4. The optimiser is a binding constraint (stated, not hidden)
-
-Recurrent MAPPO does not solve the referential game in **36 runs at 50M steps** -
+Recurrent MAPPO does not solve the referential game in **36 runs at 50M steps** —
 including with a scripted honest sender, and with the Eccles et al.
-positive-signalling bias - while a hand-coded dyad gets 4.00/4 from the same
-observations. Lower action noise and a halved credit horizon do not help. So the
-measurement-side results stand independent of the learner, while the
-"cost/decoupling does not create signalling" claims are scoped to a standard
-learner and say so.
+positive-signalling bias — while a hand-coded dyad gets 4.00/4 from the same
+observations. Lower action noise and a halved credit horizon do not help. The
+measurement results stand independent of this; the "cost/decoupling does not
+create signalling" claims are scoped to a standard learner and say so.
 
 ## What is here
 

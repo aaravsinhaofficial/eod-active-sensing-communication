@@ -17,7 +17,7 @@ shared. Crossing an informative sender (subtype $=$ the private cue) against an
 uninformative one (a bit that is constant within a trial but uncorrelated with
 the truth), and a receiver that attends to the subtype against one that ignores
 it, gives four dyads whose communication status we know
-(Fig.~\ref{fig:assay}). Only the informative-and-attended dyad succeeds:
+(Appendix~\ref{app:assay}). Only the informative-and-attended dyad succeeds:
 \AssayArrHonest\ correct arrivals out of four per episode, against \AssayArrDeaf\
 for chance.
 
@@ -33,19 +33,31 @@ deleting the subtype costs the attending receiver \AssayKillHonest\ when the
 subtype is informative and still \AssayKillRandom\ when it is noise, because the
 receiver has come to depend on it either way.
 
-Only the conjunction identifies communication. This is the standard we hold the
-electric discharge to in what follows, and it is a standard the discharge could
-in principle meet: the instruments are demonstrably capable of detecting a
-payoff-relevant, informative, attended channel in this simulator.
+The mediated effect of \S\ref{sec:nie} answers all four correctly, and it is the
+only one of the four measures that does (Fig.~\ref{fig:discrim}). It is
+\NIEHonest\ (95\% CI $[\NIEHonestLo, \NIEHonestHi]$) for the communicating dyad
+and indistinguishable from zero for the other three: \NIEDeaf\ when the message
+is informative but ignored, and \NIENoise\ when it is attended but carries
+nothing. The contrast with the ablation test on the same dyad is the point of
+Proposition~\ref{prop:ablation}: deleting the message costs that receiver
+\KillNoise, because it has organised its behaviour around a variable it can no
+longer see, while resampling the message from its own marginal costs it nothing,
+because there was never any correspondence to break.
+
+This also fixes the detection floor. Any null we report later must be read
+against \NIEHonest---the size of the effect these instruments demonstrably
+resolve in this simulator.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{../figs/fig0_assay_validation.pdf}
-\caption{\textbf{The assays detect communication when it is present, and each is
-foolable alone.} Four dyads in the referential game. Only \emph{info+attend} is
-communicating; the other three each satisfy some subset of the diagnostics.}
-\label{fig:assay}
+\includegraphics[width=0.66\textwidth]{../figs/fig0a_discrimination.pdf}
+\caption{\textbf{Which diagnostic fires where.} Cells are normalised within each
+row; orange outlines mark answers that disagree with ground truth. Only the first
+column is communicating. The three standard measures make \DiscrimErrors\ errors
+between them; the mediated effect makes none.}
+\label{fig:discrim}
 \end{figure}
+
 
 \subsection{What the optimiser can and cannot do}
 \label{sec:optimiser}
@@ -89,21 +101,17 @@ bug in the reference code: its configuration file specifies a wall-reflection
 coefficient of $0.95$, but the scene builder never forwards it, so the published
 results in fact use unattenuated images.
 
-\subsection{The discharge is worth a great deal --- to the emitter}
-
-Agents that can discharge eat \FullEaten\ food items per episode; agents muted
-from the start of training eat \SilentEaten\ (\ProbeGain$\times$, Hedges'
-$g=\ProbeD$, $p=\ProbeP$). The probe does real work, which is the precondition
-for everything that follows: an \eod\ is not a cheap-talk token but an expensive
-and useful act of sensing that happens to be public. Removing the three
-consequences one at a time during training orders them---no detection
-\NoKnollenEaten, no illumination \NoIllumEaten, private probe only
-\PrivateEaten, no reafference \NoSelfEaten---but from-scratch comparisons
-confound the value of a channel with the difficulty of learning without it, and
-training here is bimodal (Appendix~\ref{app:scratch}). We therefore rely on
-interventions applied to frozen policies.
-
 \subsection{The muting effect is almost entirely private sensing}
+
+Agents that can discharge eat \FullEaten\ food items per episode against
+\SilentEaten\ for agents muted from the start of training (\ProbeGain$\times$,
+Hedges' $g=\ProbeD$, $p=\ProbeP$): the probe does real work, which is the
+precondition for everything else. Removing the three consequences one at a time
+during training orders them---no detection \NoKnollenEaten, no illumination
+\NoIllumEaten, private probe only \PrivateEaten, no reafference
+\NoSelfEaten---but from-scratch comparisons confound the value of a channel with
+the difficulty of learning without it (Appendix~\ref{app:scratch}), so we turn to
+interventions on frozen policies.
 
 The central experiment. We take a trained, intact population and, at evaluation
 time only, silence one fish---the intervention used upstream---then repeat with
@@ -132,7 +140,7 @@ almost entirely private electrolocation.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=\textwidth]{../figs/fig3_muting_decomposition.pdf}
+\includegraphics[width=0.94\textwidth]{../figs/fig3_muting_decomposition.pdf}
 \caption{\textbf{Silencing one fish removes three things at once; separating them
 reassigns the effect.} Within-arena paired differences from the intact channel,
 frozen policies. Significance is a permutation test over seeds.}
@@ -152,14 +160,14 @@ proximity is recovered with $\Delta R^2 = \ContentFood$ above a time-shifted
 baseline ($p=\ContentFoodP$; Fig.~\ref{fig:content}B). Positive signalling about
 food, measured as mutual information conditioned on distance-to-neighbour decile
 so that geometry cannot manufacture it, is \PSFood\ of the state entropy
-(Fig.~\ref{fig:content}A).
+(Appendix~\ref{app:content}).
 
 Positive listening holds too. The interventional causal influence of
 Eq.~\ref{eq:cie}---re-rendering a receiver's sensory input under
 $\dosim(e_j{=}1)$ versus $\dosim(e_j{=}0)$ with everything else held on its
 factual path---is \CIE\ nats, against a noise floor of \CIENull\ nats obtained by
 re-rendering the \emph{same} intervention under an independent noise draw
-(Fig.~\ref{fig:listening}A). The channel moves receiver policies
+(Appendix~\ref{app:content}). The channel moves receiver policies
 \CIERatio$\times$ more than sensory noise does.
 
 Both of these diagnostics, however, behave badly here in ways worth recording.
@@ -172,83 +180,56 @@ straightforward to demonstrate once a deaf population is available as a control.
 Causal influence misbehaves in the other direction: it \emph{rises}
 \CIEFold-fold, from \CIECostZero\ to \CIECostHigh\ nats, as metabolic cost is
 increased---that is, precisely as the pulse train becomes rarer and less
-informative (Fig.~\ref{fig:listening}D). A rare discharge is more surprising, so
+informative (Appendix~\ref{app:content}). A rare discharge is more surprising, so
 switching it on or off moves the receiver's policy more, even though the train as
 a whole now tells the receiver less. Influence per message and information per
 unit time are different quantities, and in this system they are
 anti-correlated.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig4_content.pdf}
-\caption{\textbf{What the pulse train carries.} (A) Positive signalling,
-conditioned on distance-to-neighbour decile. (B) Cross-validated decoding from
-receiver-observable pulse counts only, minus the time-shifted baseline. (C)
-Discharge probability by food proximity.}
-\label{fig:content}
-\end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig5_listening.pdf}
-\caption{\textbf{Positive listening, and why it is not enough.} (A)
-Interventional causal influence against its noise floor (log scale). (B)
-Positive listening against a rate-matched time-shift null and against silence,
-which is out of distribution. (C) Phantom-pulse dose-response on neighbours'
-intake. (D) The dissociation: as metabolic cost rises, causal influence per
-discharge \emph{increases} while the information a receiver can decode
-\emph{falls}. Influence and informativeness move in opposite directions, so
-neither substitutes for the other.}
-\label{fig:listening}
-\end{figure}
 
-\subsection{\dots but it has no payoff consequence}
+\subsection{\dots but its mediated effect is zero}
 
 Positive signalling and positive listening are both satisfied, so on the
-effect-based definition this is communication. The payoff test says otherwise.
+effect-based definition this is communication. The mediated effect says
+otherwise.
 
-Replacing an emitter's public train with the train the same policy produced in a
-\emph{different arena}---identical marginal rate, burst structure and inter-pulse
-statistics, no contingency with the receiver's actual world---changes neither
-party's return. The same holds for temporal scrambling, for identity scrambling,
-and for phantom pulses injected at rates from \num{0.05} to \num{0.6}
-(Fig.~\ref{fig:listening}C). Because a non-significant difference is not evidence
-of no difference, we report these as two one-sided tests against an equivalence
-margin fixed in advance at \SI{5}{\percent} of the intact condition's own return:
+Transmitting the pulse train the same policy produced in an independently drawn
+arena---identical marginal rate, burst structure and inter-pulse statistics, no
+correspondence with the receiver's actual world---changes the receivers' return by
+\FishNIE\ (95\% CI $[\FishNIELo, \FishNIEHi]$), which is \FishNIEPct\% of what
+they earn, and the sender's by \FishNIESender. Swapping in trains recorded in the
+opposite food context gives the same answer. Against the \NIEHonest\ the same
+measure returns on the validation dyad, that is a null roughly \NIERatio\ times
+smaller than the effect these instruments resolve.
+
+The other channel manipulations agree. Temporal scrambling, identity scrambling
+and phantom pulses injected at rates from \num{0.05} to \num{0.6} all leave
+returns unmoved (Appendix~\ref{app:content}). We report these as no effect
+detectable at this sample size rather than as demonstrated equivalence:
 \TOSTVERDICT
 
-The contingency of the public channel, as opposed to its presence, is worth
-approximately nothing to anybody. A receiver can read the emitter's situation off
-its pulse train, and does adjust its policy when the train changes, but nothing
-downstream of that adjustment shows up in what either fish eats.
+A receiver can read the emitter's situation off its pulse train, and does adjust
+its policy when the train changes, but the correspondence between train and world
+is worth nothing to either party. On the definition of \S\ref{sec:nie} the
+discharge is an exploited cue.
 
 \subsection{Cost and predation regulate the probe without creating a signal}
 
-The reference model gives discharges no cost. Adding one produces a clean
-dose-response: discharge probability falls monotonically from \EmitCostZero\ at
-$\lambda=0$ to \EmitCostHigh\ at $\lambda=0.08$ (Fig.~\ref{fig:phase}).
-Eavesdropping predation pushes it lower again at every cost, and mortality falls
-with it, so crypsis works. Cooperative harvesting sustains a higher rate than
-competition at matched cost.
-
-We expected this to make the pulse train informative. A budget has to be spent
-where it pays, and a schedule that allocates pulses to the moments that matter
-should be more diagnostic of the emitter's state than a constant one. The
-opposite happens. Information about food falls monotonically with cost, from
-$\Delta R^2 = \ContentCostZero$ at $\lambda=0$ to \ContentCostHigh\ at
-$\lambda=0.08$, and the same decline appears for every other target we decoded.
-It survives normalising per pulse: informativeness per discharge falls from
-\PSPerPulseZero\ to \PSPerPulseHigh. The learned response to a metabolic price is
-a lower baseline rate, not a smarter schedule.
-
-Silence behaves the same way. Discharge probability is essentially identical
-whether or not a predator is within \SI{25}{\centi\metre} (difference
-\SilenceDangerDiff), and danger is close to undecodable from the public channel
-(\DangerAUC\ AUC above the time-shifted baseline). Agents manage their average
-exposure rather than timing their gaps, which is what a prey animal that cannot
-see the predator coming can do; our predator detects discharges at
-\SI{60}{\centi\metre} but is itself passively detectable only at about
-\SI{25}{\centi\metre}.
+Adding a metabolic price gives a clean dose-response: discharge probability falls
+from \EmitCostZero\ at $\lambda=0$ to \EmitCostHigh\ at $\lambda=0.08$.
+Eavesdropping predation pushes it lower again at every cost and mortality falls
+with it, so crypsis works; cooperative harvesting sustains a higher rate than
+competition at matched cost. We expected economy to make the train informative,
+since a budget must be spent where it pays. The opposite happens: information
+about food falls monotonically from $\Delta R^2 = \ContentCostZero$ to
+\ContentCostHigh, and it keeps falling after normalising per pulse
+(\PSPerPulseZero\ to \PSPerPulseHigh). The learned response to a price is a lower
+baseline rate, not a smarter schedule. Silence behaves the same way: discharge
+probability is essentially unchanged by a predator within \SI{25}{\centi\metre}
+(\SilenceDangerDiff) and danger is near-undecodable from the public channel
+(\DangerAUC\ AUC), so agents manage average exposure rather than timing gaps.
+Appendix~\ref{app:regimes} gives the full grid and the regime labels.
 
 \subsection{Sender shaping, with reception held fixed}
 
@@ -267,32 +248,19 @@ The yoked condition holds reception fixed and cuts audibility instead. Receivers
 get knollen input with matched statistics, drawn from another arena, so no
 sender's pulses reach anybody while every receiver still has a realistic social
 input stream. Measured this way, sender shaping is \SSIYokeZero\ at zero cost
-(Fig.~\ref{fig:ssi}A), and discharge rate is \EmitLiveZero\ live versus
+(Appendix~\ref{app:content}), and discharge rate is \EmitLiveZero\ live versus
 \EmitYokeZero\ yoked. \YOKEDVERDICT
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{../figs/fig6_ssi.pdf}
-\caption{\textbf{Sender shaping measured with reception held fixed.} (A) SSI from
-the yoked contrast, which cuts audibility only, beside the confounded deaf
-contrast, which cuts reception. (B) Discharge rate, live versus yoked. (C) The
-free-riding effect that drives the deaf contrast: fish that can hear neighbours
-discharge less.}
-\label{fig:ssi}
-\end{figure}
 
-\subsection{A decoupled variable is what lets a social function appear}
+\subsection{Freeing the channel is not sufficient either}
 
-A negative result is only as good as the positive control beside it, and to this
-point every manipulation has left the discharge welded to its sensory function.
-We therefore gave the agents a second variable: a discharge subtype, one bit,
-that rides on the pulse---so sending still costs a pulse and still exposes the
-fish to predators---but whose value changes nothing about the emitter's own
-electric image, nothing about how the pulse illuminates neighbours, and nothing
-about detectability. Only the content is decoupled, not the act.
-
-\DECOUPLEDRESULT
-
+A negative result is only as good as its positive control, and to this point every
+manipulation left the discharge welded to its sensory function. We therefore gave
+the agents a second variable: a one-bit discharge subtype that rides on the pulse,
+so sending still costs a pulse and still exposes the fish to predators, but whose
+value changes nothing about the emitter's own electric image, nothing about how
+the pulse illuminates neighbours, and nothing about detectability. Only the
+content is decoupled, not the act. \DECOUPLEDRESULT
 
 \subsection{The same decomposition in a world with no electric fish in it}
 
@@ -315,15 +283,9 @@ magnitude of the decomposition depends on the electric-fish biophysics; what it
 depends on is that one action does two jobs.
 
 
-\subsection{The regime map, and how far it generalises}
-
-Appendix~\ref{app:regimes} gives the full cost $\times$ predation $\times$
-economics grid and the rule-based regime labels. The structure
-is orderly, but it is the structure of a probe schedule being turned up and
-down: the axes that move are discharge rate and mortality, while the
-informational and payoff-relevance axes stay near zero throughout.
+\subsection{How far the decomposition generalises}
 
 \GENERALISATION
 
-\input{gen_table}
+
 

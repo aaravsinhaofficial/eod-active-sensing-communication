@@ -13,8 +13,15 @@
 \usepackage{microtype}
 \usepackage{siunitx}
 \usepackage{enumitem}
+\usepackage{amsthm}
+\newtheorem{proposition}{Proposition}
 
-\captionsetup{font=small,labelfont=bf}
+\captionsetup{font=small,labelfont=bf,skip=3pt}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\intextsep}{8pt plus 2pt minus 2pt}
+\setlength{\abovedisplayskip}{5pt}
+\setlength{\belowdisplayskip}{5pt}
 \setlength{\parskip}{0pt}
 
 \input{numbers}
@@ -23,10 +30,9 @@
 \newcommand{\dosim}{\mathrm{do}}
 \newcommand{\KL}{D_{\mathrm{KL}}}
 
-\title{\bfseries Active sensing is not communication\\
-\large Causal auditing of emergent signals in embodied multi-agent
-reinforcement learning, and the channel factorisation that lets signalling
-appear}
+\title{\bfseries Communication is a mediated effect\\
+\large Separating signals from exploited cues in dual-use action channels,
+with an application to active electrosensing}
 
 \author{}
 
@@ -37,36 +43,17 @@ appear}
 
 \begin{abstract}
 \noindent
-Every electric organ discharge (\eod) a weakly electric fish produces does two
-things at once: it illuminates the emitter's own surroundings, and it broadcasts
-the emitter's presence to anyone with the receptors to detect it. This dual use
-makes it unusually hard to say whether an \eod\ is \emph{communication}. A recent
-multi-agent reinforcement learning model of electric fish collectives showed that
-\eod{}s shape group foraging and spacing, and defined communication operationally
-as an \eod\ that conspecifics detect and respond to. That definition cannot
-separate a signal from a cue, and the single intervention available in that
-model---silencing one fish---removes the emitter's own electrolocation and its
-neighbours' access to it simultaneously, so the resulting behavioural change
-cannot be attributed to either.
-%
-We build a GPU-vectorised reimplementation of that simulator, validated against
-the original to floating-point round-off (maximum relative deviation
-\ValMaxErr\ across all sensory pathways), that runs \ThroughputK{}k agent-steps
-per second and lets us switch the consequences of a discharge independently. A
-single motor act is decomposed into three separately controllable channels:
-\emph{reafference} (the emitter's own image of the world), \emph{illumination}
-(the same pulse lighting up a neighbour's world---an exploitable cue), and
-\emph{detection} (the pulse registering on a neighbour's knollenorgans---a
-candidate signal). We further add what the original model lacks: a metabolic cost
-per discharge, electroreceptive predators that home in on \eod{}s, switchable
-cooperative and competitive food economics, tunable social range, and persistent
-individual identity.
+An action that both senses and broadcasts is hard to classify. A weakly electric
+fish's discharge illuminates its own surroundings and simultaneously announces its
+presence to anyone with the receptors to detect it, and the same structure arises
+for active sonar, a robot's laser sweep, or any observable act of sensing. Whether
+such an act is \emph{communication} or a cue that others merely exploit is
+routinely settled with three diagnostics---positive signalling, causal influence,
+and the payoff cost of ablating the channel---and we show that each is
+individually foolable, on dyads whose communication status is known by
+construction.
 %
 \ABSTRACTRESULTS
-%
-Standard emergent-communication diagnostics can therefore misclassify an
-exploited sensory cue as communication, and freeing the channel is not by itself
-what converts one into the other.
 \end{abstract}
 
 \section{Introduction}
@@ -106,32 +93,21 @@ about the sender's state) and \emph{positive listening} (the message causally
 changes the receiver's behaviour), and note that either can occur without the
 other.
 
-For electric fish the problem is sharper than in a generic emergent-communication
-setup, because the channel is not a dedicated cheap-talk symbol but a physical
-act with an unavoidable private benefit. Three consequences follow from a single
-discharge:
-
-\begin{enumerate}[leftmargin=1.4em,itemsep=1pt,topsep=2pt]
-\item \textbf{Reafference.} The pulse casts an electric image of nearby objects
-      onto the emitter's own mormyromasts. This is active electrolocation and is
-      the reason the behaviour exists at all.
-\item \textbf{Illumination.} The same field polarises objects in a neighbour's
-      vicinity, and the neighbour's mormyromasts can read those images---%
-      collective electrosensing, demonstrated in real fish by
-      \citet{pedraja2024collective}. The neighbour gains information from a probe
-      it did not pay for. This is the paradigm case of a \emph{cue}.
-\item \textbf{Detection.} The pulse registers on the neighbour's knollenorgans,
-      which are dedicated to conspecific discharges and encode the emitter's
-      identity and bearing. This is the only one of the three that could be a
-      \emph{signal} in the strict sense.
-\end{enumerate}
-
-Silencing a fish removes all three at once. Any behavioural consequence is
-therefore uninterpretable: it may be the muted fish foraging worse because it can
-no longer see, its neighbours foraging worse because they lost a source of free
-illumination, or its neighbours behaving differently because a signal they were
-attending to has disappeared. This confound is not specific to the model; it is
-the reason \eod-ablation experiments in real fish are hard to interpret.
+Our setting makes the problem sharper than a generic emergent-communication
+study, because the channel is not a dedicated cheap-talk symbol but a physical act
+with an unavoidable private benefit. A single discharge has three consequences:
+\textbf{reafference}, the electric image of nearby objects cast onto the emitter's
+own mormyromasts, which is why the behaviour exists at all; \textbf{illumination},
+the same field polarising objects near a \emph{neighbour}, whose mormyromasts can
+read those images for free---collective electrosensing, demonstrated in real fish
+by \citet{pedraja2024collective}, and the paradigm case of a cue; and
+\textbf{detection}, the pulse registering on the neighbour's knollenorgans, which
+encode emitter identity and bearing and are the only one of the three that could
+be a signal. Silencing a fish removes all three at once, so any behavioural
+consequence is uninterpretable---the muted fish may forage worse because it can no
+longer see, its neighbours because they lost free illumination, or because a
+signal they attended to has gone. This is not an artefact of the model; it is why
+\eod-ablation experiments in real fish are hard to read.
 
 \paragraph{Contributions.} We make the three consequences independently
 switchable and ask what changes. (i) A \textbf{channel algebra} for dual-use
@@ -205,6 +181,8 @@ biology we add is established: collective electrosensing
 \citep{wallach2023internal}, discharge energetics
 \citep{salazar2013energetics,markham2009circadian}, and electroreceptive
 eavesdroppers \citep{stoddard1999predation,hanika1999electric}.
+
+\input{theory}
 
 \input{results}
 

@@ -429,6 +429,39 @@ def decode_content(rec: dict, w: int = 21, horizon: int = 41):
 # Sender Shaping Index: the cue / signal discriminator
 # ---------------------------------------------------------------------------
 
+def natural_indirect_effect(rec_factual, rec_mediated, agent_slice, n_boot=4000, seed=0):
+    """Communication as a natural indirect effect (Pearl, 2001).
+
+    Let S be the sender's private state, M = M(S) the message it emits, and
+    u_R the receiver's payoff.  The total effect of S on u_R runs through two
+    kinds of path: direct ones (the sender moves, occupies space, eats) and the
+    message.  The natural indirect effect isolates the second,
+
+        NIE = E[u_R(S = s, M = M(s'))] - E[u_R(S = s, M = M(s))],   s' ~ p(S),
+
+    that is: hold the world at s, but transmit the message the sender *would
+    have* produced in an independently drawn world s'.
+
+    Two properties matter, and together they are why this succeeds where the
+    other diagnostics fail.  First, M(s') is drawn from the message's own
+    marginal, so the receiver is never taken out of distribution -- unlike
+    deleting the message, which is what makes ablation fire for channels that
+    carry nothing.  Second, the quantity is zero unless the message both depends
+    on S and matters to the receiver: if M is independent of S then M(s') and
+    M(s) are identically distributed and NIE = 0; if the receiver ignores M then
+    u_R does not depend on it and NIE = 0.
+    """
+    a = rec_mediated["rew"][:, :, agent_slice].sum(0).mean(-1).cpu().numpy()
+    b = rec_factual["rew"][:, :, agent_slice].sum(0).mean(-1).cpu().numpy()
+    rng = np.random.default_rng(seed)
+    bs = (a[rng.integers(0, len(a), (n_boot, len(a)))].mean(1)
+          - b[rng.integers(0, len(b), (n_boot, len(b)))].mean(1))
+    return {"nie": float(a.mean() - b.mean()),
+            "lo": float(np.percentile(bs, 2.5)),
+            "hi": float(np.percentile(bs, 97.5)),
+            "significant": bool(np.percentile(bs, 2.5) > 0 or np.percentile(bs, 97.5) < 0)}
+
+
 def knollen_slice(env):
     """Index range of the knollen block (plus its size metadata) in the observation."""
     from . import constants as C

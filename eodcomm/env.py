@@ -116,6 +116,14 @@ class EnvConfig:
     # trial.  Scoring it on food eaten would confound signal use with
     # close-range foraging skill, which is not what is under test.
     ref_arrival_reward: float = 10.0
+    # Mediation intervention.  The transmitted subtype is computed from an
+    # independently resampled referent while the true referent -- and therefore
+    # the food, and every non-message pathway from sender state to receiver
+    # payoff -- is left exactly as it was.  This realises Pearl's natural
+    # indirect effect: it asks what the receiver loses when the message stops
+    # tracking the world, without ever taking the message out of its own
+    # marginal distribution, which is what deleting it would do.
+    ref_mediate: bool = False
 
     morm_enabled: bool = True
     amp_enabled: bool = True
@@ -319,6 +327,9 @@ class FishEnv:
         self._sig = torch.zeros((B, F), device=self.dev, dtype=torch.bool)
         self._arrived = torch.zeros((B, F), device=self.dev, dtype=torch.bool)
         self._rand_bit = (torch.rand((B,), generator=self.g, device=self.dev) < 0.5)
+        # an independent copy of the referent, used only to generate the message
+        # under the mediation intervention
+        self._active_msg = (torch.rand((B,), generator=self.g, device=self.dev) < 0.5).long()
         self.was_bitten = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.bite_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.eat_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
@@ -400,6 +411,8 @@ class FishEnv:
         self._arrived = torch.where(which[:, None], torch.zeros_like(self._arrived), self._arrived)
         newbit = (torch.rand((self.B,), generator=self.g, device=self.dev) < 0.5)
         self._rand_bit = torch.where(which, newbit, self._rand_bit)
+        shadow = (torch.rand((self.B,), generator=self.g, device=self.dev) < 0.5).long()
+        self._active_msg = torch.where(which, shadow, self._active_msg)
 
     # ------------------------------------------------------------------
     # Sensing
@@ -673,7 +686,8 @@ class FishEnv:
                 action[:, 0, 2] = 1.0                   # nor choose when to pulse
             if cfg.ref_scripted != "none" and cfg.signal_channel:
                 if cfg.ref_scripted == "honest":
-                    bit = self.active.to(self.dt_type)
+                    ref = self._active_msg if cfg.ref_mediate else self.active
+                    bit = ref.to(self.dt_type)
                 else:
                     # 'random': a bit that is constant within a trial, exactly
                     # like the honest one, but uncorrelated with the truth --

@@ -1,0 +1,100 @@
+\section{Communication as a natural indirect effect}
+\label{sec:nie}
+
+The three diagnostics in common use fail on the dyads of \S\ref{sec:assay}, and
+they fail for a shared structural reason: none of them asks the question that
+defines communication. Positive signalling looks only at the sender, and is
+satisfied by a sender talking to nobody. Causal influence and positive listening
+look only at the receiver, and are satisfied by a receiver attending to noise.
+Ablation asks what happens when the message is removed, which is a different
+question from what the message conveys---and removal takes the receiver outside
+the support of its own training distribution, which is precisely why it fires for
+a channel that carries nothing.
+
+What communication requires is that the receiver's payoff depend on the sender's
+private state \emph{through} the message. That is a mediation question, and it
+has a standard causal answer \citep{pearl2016causal,pearl2009causality}.
+
+\paragraph{Definition.} Let $S$ be the sender's private state, $M$ the message it
+emits, and $u_R$ the receiver's return. $S$ influences $u_R$ along two kinds of
+path: direct ones, since the sender also moves, occupies space and consumes
+resources, and the mediated path through $M$. Write $M(s)$ for the message the
+sender's policy would emit in state $s$, and $u_R(s, m)$ for the receiver's return
+when the world is in state $s$ and the transmitted message is $m$. The
+\emph{natural indirect effect} of the message is
+\begin{equation}
+\mathrm{NIE} \;=\; \mathbb{E}_{s,\,s' \sim p(S)}\big[\, u_R\big(s,\, M(s')\big)
+  \;-\; u_R\big(s,\, M(s)\big) \,\big],
+\label{eq:nie}
+\end{equation}
+with $s'$ drawn independently of $s$. Operationally: hold the world at $s$, so
+every direct pathway is untouched, and transmit the message the sender
+\emph{would have} produced in an independently drawn world. We estimate it by
+running matched pairs of episodes that share initial conditions and the
+sensory-noise stream, and differencing within pair.
+
+Two properties do the work.
+
+\begin{proposition}[Insensitivity to uninformative channels]
+\label{prop:noise}
+If $M \perp S$, then $\mathrm{NIE} = 0$.
+\end{proposition}
+\begin{proof}
+If the message does not depend on the sender's state then $M(s')$ and $M(s)$ are
+identically distributed for every $s$, so the two terms of Eq.~\ref{eq:nie} have
+equal expectation. \qed
+\end{proof}
+
+\begin{proposition}[Insensitivity to unattended channels]
+\label{prop:deaf}
+If the receiver's policy does not depend on $M$, then $\mathrm{NIE} = 0$.
+\end{proposition}
+\begin{proof}
+Then $u_R(s, m) = u_R(s)$ for all $m$, and the difference vanishes pointwise. \qed
+\end{proof}
+
+\begin{proposition}[Deletion is not mediation]
+\label{prop:ablation}
+The ablation contrast $\mathbb{E}[u_R(s, \varnothing)] - \mathbb{E}[u_R(s, M(s))]$,
+where $\varnothing$ denotes a removed or zeroed message, can be non-zero even when
+$M \perp S$.
+\end{proposition}
+\begin{proof}
+By counterexample, realised in \S\ref{sec:assay}: a receiver whose policy
+conditions on $M$ commits to a target on the basis of a message that carries no
+information about $S$. Removing $M$ leaves it with an input outside the support of
+$M$, so it does not commit at all, and its return falls by \KillNoise. Yet
+$M \perp S$, so by Proposition~\ref{prop:noise} the mediated effect is zero and no
+information has been lost. \qed
+\end{proof}
+
+Propositions~\ref{prop:noise} and \ref{prop:deaf} say the NIE is zero in exactly
+the two ways a system can fail to communicate while satisfying a standard
+diagnostic, and Proposition~\ref{prop:ablation} says why the payoff test that
+looks closest to ours is not equivalent to it. The distinction is that
+$M(s')$ is drawn from the message's own marginal: the receiver always sees a
+message it could have seen, and only the correspondence between message and world
+is broken.
+
+\paragraph{Estimation.} Eq.~\ref{eq:nie} needs $M(s')$, the message the sender's
+policy would have produced in a counterfactual world. In a simulator this is
+directly available. In the referential game we resample the referent, recompute
+the sender's message from it, and transmit that while the true referent and the
+food stay where they were. In the naturalistic foraging world the sender's state
+is not a single latent variable, so we use the trajectory-level analogue: the
+message actually transmitted is replaced by the pulse train the same policy
+produced in an independently drawn arena. Marginal rate, burst structure and
+inter-pulse-interval statistics are preserved exactly---these are the same trains
+that policy emits---while the correspondence between the train and the receiver's
+world is destroyed.
+
+\paragraph{What it does not do.} The NIE is a statement about payoff, so it will
+report zero for a channel that is informative and attended but whose use happens
+not to matter to either party in the environment tested; it measures the
+\emph{realised value} of the correspondence, not its existence. It also inherits
+the usual mediation caveat: the decomposition into direct and indirect paths is
+well defined only if the message can be intervened on without disturbing the
+direct paths, which is exactly what the channel algebra of \S\ref{sec:algebra}
+buys us and which is not available in an unmodified simulator. Finally, like any
+causal-effect estimate it is bounded by statistical power, so a null must be read
+against a measured detection floor---which is what the validation dyads provide.
