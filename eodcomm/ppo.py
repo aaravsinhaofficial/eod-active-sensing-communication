@@ -38,8 +38,9 @@ class PPOConfig:
 
 
 class ActorCritic(nn.Module):
-    def __init__(self, obs_dim: int, n_agents: int, cfg: PPOConfig):
+    def __init__(self, obs_dim: int, n_agents: int, cfg: PPOConfig, n_disc: int = 2):
         super().__init__()
+        self.n_disc = n_disc
         h, g = cfg.hidden, cfg.gru
         self.enc = nn.Sequential(
             nn.Linear(obs_dim, h), nn.LayerNorm(h), nn.Tanh(),
@@ -47,7 +48,7 @@ class ActorCritic(nn.Module):
         )
         self.gru = nn.GRU(h, g, batch_first=False)
         self.pi_cont = nn.Linear(g, 2)      # thrust, turn (means)
-        self.pi_disc = nn.Linear(g, 2)      # emit, bite (logits)
+        self.pi_disc = nn.Linear(g, n_disc)  # emit, bite [, signal] (logits)
         self.log_std = nn.Parameter(torch.full((2,), cfg.log_std_init))
 
         self.cenc = nn.Sequential(
@@ -126,7 +127,8 @@ class MAPPO:
     def __init__(self, env, cfg: PPOConfig, device="cuda", seed=0):
         self.env, self.cfg, self.dev = env, cfg, torch.device(device)
         torch.manual_seed(seed)
-        self.net = ActorCritic(env.obs_dim, env.F, cfg).to(self.dev)
+        self.net = ActorCritic(env.obs_dim, env.F, cfg,
+                               n_disc=getattr(env, "n_disc", 2)).to(self.dev)
         self.opt = torch.optim.Adam(self.net.parameters(), lr=cfg.lr, eps=1e-5)
         self.B, self.F, self.D = env.B, env.F, env.obs_dim
         self.N = self.B * self.F
@@ -156,7 +158,8 @@ class MAPPO:
             cobs = self._central(obs)
             val, self.chx = self.net.value(cobs[None], self.chx)
 
-            nobs, rew, done, info = self.env.step(act.reshape(self.B, self.F, 4), channel)
+            nobs, rew, done, info = self.env.step(
+                act.reshape(self.B, self.F, self.env.act_dim), channel)
             buf["obs"].append(obs)
             buf["cobs"].append(cobs)
             buf["cont"].append(cont)

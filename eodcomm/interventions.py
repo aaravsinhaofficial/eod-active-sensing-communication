@@ -150,7 +150,35 @@ def channel_battery(tr, env, n_steps: int = 512, seed: int = 7, target: int = 0,
     res = {}
     for k, sp in specs.items():
         res[k], _ = evaluate_channel(tr, env, sp, n_steps, seed, target)
+
+    # If a decoupled signalling variable exists, ablate it on its own.  The pulse
+    # -- and therefore every sensory consequence -- is left completely intact, so
+    # any payoff change is attributable to the signal content alone.  This is the
+    # manipulation that is impossible for the coupled channel.
+    if getattr(env.cfg, "signal_channel", False):
+        for flag, name in (("_kill_subtype", "kill_subtype"),
+                           ("_scramble_subtype", "scramble_subtype")):
+            setattr(env, flag, True)
+            res[name], _ = evaluate_channel(tr, env, None, n_steps, seed, target)
+            setattr(env, flag, False)
     return res, rec0
+
+
+def tost_equivalence(res, cond_a, cond_b, dv, margin, n_boot=4000, seed=0):
+    """Two one-sided tests: is the paired difference inside +/- margin?
+
+    Reporting a non-significant difference is not evidence of no effect.  This
+    asks the question that matters instead -- whether the effect is small enough
+    to be practically nil -- against a margin fixed in advance as a fraction of
+    the intact condition's own value.
+    """
+    d = res[cond_a]["_per_arena"][dv] - res[cond_b]["_per_arena"][dv]
+    rng = np.random.default_rng(seed)
+    bs = d[rng.integers(0, len(d), (n_boot, len(d)))].mean(1)
+    lo, hi = np.percentile(bs, [5, 95])          # 90% CI == two one-sided 5% tests
+    return {"mean": float(d.mean()), "lo90": float(lo), "hi90": float(hi),
+            "margin": float(margin),
+            "equivalent": bool(lo > -margin and hi < margin)}
 
 
 def paired_diff(res, cond_a, cond_b, dv, n_boot=2000, seed=0):

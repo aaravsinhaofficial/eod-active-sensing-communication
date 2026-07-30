@@ -1,0 +1,92 @@
+{
+ "name": "C_c0.08_p0.0_coop_s1",
+ "seed": 1,
+ "env": {
+  "n_fish": 4,
+  "n_food": 48,
+  "n_patches": 4,
+  "episode_len": 512,
+  "batch": 512,
+  "arena_cm": [
+   60.0,
+   60.0
+  ],
+  "eod_cost": 0.08,
+  "predation": 0.0,
+  "shared_food": 1.0,
+  "pred_detect_cm": 60.0,
+  "pred_speed_cm": 0.45
+ },
+ "base": {
+  "eaten_per_ep": 1.357812523841858,
+  "eaten_group": 5.431250095367432,
+  "reward_per_ep": 12.727649688720703,
+  "emit_rate": 0.01871861144900322,
+  "emit_rate_subordinate": 0.02066127210855484,
+  "emit_rate_dominant": 0.01677594892680645,
+  "silence_index": -0.23160079937654054,
+  "nn_dist": 23.569150924682617,
+  "struck_per_ep": 0.0,
+  "bit_per_ep": 1.2218750715255737,
+  "heard_frac": 0.01870349794626236,
+  "emit_rate_food": 0.017805276438593864,
+  "emit_rate_nofood": 0.019274244084954262
+ },
+ "positive_signaling": {
+  "food": {
+   "mi": 0.0,
+   "null": 3.203426503814917e-17,
+   "p": 1.0,
+   "norm": 0.0
+  },
+  "dominance": {
+   "mi": 0.0,
+   "null": 2.3064603791477504e-17,
+   "p": 1.0,
+   "norm": 0.0
+  },
+  "movement": {
+   "mi": 0.0,
+   "null": 3.331550156769535e-17,
+   "p": 1.0,
+   "norm": 0.0
+  },
+  "danger": {
+   "mi": 0.0,
+   "null": 0.0,
+   "p": 1.0,
+   "norm": 0.0
+  }
+ },
+ "content": {
+  "food": {
+   "score": 0.002364951777469093,
+   "null": 0.00048574241049148537,
+   "delta": 0.0018792093669776078,
+   "kind": "r2"
+  },
+  "will_eat": {
+   "score": 0.5189992041083423,
+   "null": 0.5064431489345614,
+   "delta": 0.012556055173780889,
+   "kind": "auc"
+  },
+  "dominance": {
+   "score": 0.0010703878642590592,
+   "null": 0.001066940928508231,
+   "delta": 3.4469357508282172e-06,
+   "kind": "r2"
+  },
+  "movement": {
+   "score": 0.007494279759829414,
+   "null": -2.586012113803271e-05,
+   "delta": 0.007520139880967447,
+   "kind": "r2"
+  },
+  "danger": {
+   "score": 0.0,
+   "null": 0.0,
+   "delta": 0.0
+  }
+ }
+}

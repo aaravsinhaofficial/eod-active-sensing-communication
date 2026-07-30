@@ -14,7 +14,34 @@ Every EOD does three things at once:
 Silencing a fish — the standard intervention, and the one used by
 [Singh, Johnson-Yu et al. (2025)](https://arxiv.org/abs/2511.08436) — removes all
 three at once, so the resulting behavioural change cannot be attributed to any of
-them. This repository makes the three independently switchable.
+them. This repository makes the three independently switchable, and adds a fourth
+condition in which a signalling variable is *decoupled* from sensing altogether.
+
+## Headline findings
+
+- **Muting is mostly blinding.** Silencing a fish costs it 0.52 food items per
+  episode; 0.51 of that is the loss of its own electrolocation. The loss of
+  detectability by others costs +0.03 (n.s.).
+- **The channel passes every standard test for communication and still is not
+  communicating.** It carries decodable information about food (ΔR² = 0.16) and
+  moves receiver policies 13× more than sensory noise — yet replaying,
+  scrambling or fabricating it changes nobody's payoff within our resolution.
+- **Two standard diagnostics fail outright.** Positive signalling is *higher* in
+  populations whose receivers are deaf (0.152 vs 0.086) — a fish modulates its
+  probe rate whether or not anyone listens. And causal influence *rises* 12-fold
+  as the channel becomes less informative, because a rare pulse is a more
+  surprising one.
+- **Cost does not manufacture semantics.** Metabolic cost and eavesdropping
+  predation drive discharge rate down monotonically and crypsis works, but the
+  pulse train becomes *less* informative, even per pulse.
+- **The sender-shaping control has to cut audibility, not reception.** Disabling
+  knollenorgans removes reception and measures free-riding (hearing fish emit
+  *less*, 0.545 vs 0.611). With reception held fixed and only audibility cut,
+  sender shaping is 0.04 — the pulse is a cue.
+- **Positive control.** Freeing one bit of discharge subtype from the sensory
+  function produces a payoff-relevant social channel in one of four ecological
+  settings: sparse patches under competition, where private information is
+  scarcest.
 
 ## What is here
 
@@ -52,8 +79,9 @@ pip install numpy scipy matplotlib pandas scikit-learn
 git clone https://github.com/KempnerInstitute/wef.git ../wef_upstream
 python3 scripts/validate_physics.py
 
-# 2. train every condition (168 runs; ~1.5 h on 2 GPUs)
-python3 scripts/launch_all.py
+# 2. train every condition (270 runs total; ~3 h on 2 GPUs)
+python3 scripts/launch_all.py        # channel decomposition + phase grid
+python3 scripts/launch_decoupled.py  # decoupled positive control + yoked SSI control
 
 # 3. evaluate and plot
 bash scripts/run_analysis.sh

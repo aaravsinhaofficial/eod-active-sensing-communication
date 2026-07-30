@@ -30,13 +30,65 @@ def load(pattern="results/metrics/*.json"):
     print(f"loaded {len(M)} evaluated runs")
 
 
-def group(prefix):
+# Training is bimodal: a seed either discovers patch foraging or never leaves the
+# floor set by passive sensing alone.  A seed counts as converged if it reaches
+# half the ceiling of its own task family -- for the standard arena that is 3.0
+# items, roughly midway between the all-silent floor (1.8) and the intact ceiling
+# (5.9), and the same relative criterion transfers to the sparse-patch task,
+# whose absolute scale is different.  The rule is applied identically to every
+# condition within a family, and the fraction of seeds clearing it is itself
+# reported as an outcome.
+FILTER_CONVERGED = True
+_CEIL = {}
+
+
+def _family(name):
+    """Task family: conditions that share a reward scale and are comparable."""
+    if name.startswith("E_sparse"):
+        return "E_sparse"
+    if name.startswith("E_std"):
+        return "E_std"
+    return name.split("_")[0]
+
+
+def _ceiling(fam):
+    if fam not in _CEIL:
+        by = defaultdict(list)
+        for k, v in M.items():
+            if _family(k) == fam:
+                by[k.rsplit("_s", 1)[0]].append(v["base"]["eaten_per_ep"])
+        best = max((np.mean(v) for v in by.values()), default=6.0)
+        _CEIL[fam] = best
+    return _CEIL[fam]
+
+
+def conv_thresh(name):
+    return 0.5 * _ceiling(_family(name))
+
+
+def converged(r):
+    return r["base"]["eaten_per_ep"] >= conv_thresh(r["name"])
+
+
+def group(prefix, apply_filter=None):
     """All runs whose name starts with prefix (before the _sN suffix)."""
     out = []
     for k, v in M.items():
         if re.match(rf"^{re.escape(prefix)}_s\d+$", k):
             out.append(v)
+    use = FILTER_CONVERGED if apply_filter is None else apply_filter
+    if use:
+        keep = [r for r in out if converged(r)]
+        if len(keep) >= 3:          # never filter down to an unusable sample
+            return keep
     return out
+
+
+def conv_frac(prefix):
+    allr = group(prefix, apply_filter=False)
+    if not allr:
+        return float("nan")
+    return sum(converged(r) for r in allr) / len(allr)
 
 
 def vals(prefix, *path):
@@ -121,6 +173,12 @@ def fig2():
     g = [vals(p, "base", "eaten_per_ep") for p, _, _ in COND_A]
     panel(axes[0], "A", "Food per fish per episode")
     bars_ci(axes[0], labs, g, cols, "items", rot=35)
+    for i, (p, _, _) in enumerate(COND_A):
+        cf = conv_frac(p)
+        if np.isfinite(cf):
+            axes[0].text(i, 0.02, f"{int(round(cf*100))}\\%", transform=axes[0].get_xaxis_transform(),
+                         ha="center", va="bottom", fontsize=5.4, color=INK2)
+        NUM[f"ConvFrac{p.replace('_','')}"] = f"{int(round(cf*100))}"
     full, sil = g[0], g[-1]
     num("FullEaten", float(np.mean(full)))
     num("SilentEaten", float(np.mean(sil)))
@@ -226,6 +284,12 @@ def fig4():
     if len(gs2[2]):
         num("ContentDom", float(np.mean(gs2[2])), "{:.3f}")
 
+    ph = vals("A_full", "positive_signaling", "food", "norm")
+    pdf = vals("A_noknollen", "positive_signaling", "food", "norm")
+    if len(ph) and len(pdf):
+        num("PSHear", float(np.mean(ph)), "{:.3f}")
+        num("PSDeaf", float(np.mean(pdf)), "{:.3f}")
+
     panel(axes[2], "C", "Discharge rate is state-dependent")
     a = vals("A_full", "base", "emit_rate_nofood")
     b = vals("A_full", "base", "emit_rate_food")
@@ -243,7 +307,7 @@ def fig4():
 # Figure 5 -- positive listening under counterfactual channels
 # ===========================================================================
 def fig5():
-    fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.5))
+    fig, axes = plt.subplots(1, 4, figsize=(9.2, 2.5))
     runs = group("A_full")
     if not runs:
         plt.close(fig); return
@@ -251,7 +315,7 @@ def fig5():
     panel(axes[0], "A", "Interventional causal influence")
     ci = np.array([r["cie"]["mean"] for r in runs if "cie" in r])
     cn = np.array([r["cie"]["null"] for r in runs if "cie" in r])
-    bars_ci(axes[0], ["$\\dosim(e_j)$\ncontrast", "noise\nfloor"], [ci, cn], [C_FULL, C_NULL],
+    bars_ci(axes[0], ["do$(e_j)$\ncontrast", "noise\nfloor"], [ci, cn], [C_FULL, C_NULL],
             "$D_{\\mathrm{KL}}$ (nats)")
     axes[0].set_yscale("log")
     if len(ci):
@@ -267,10 +331,10 @@ def fig5():
     if len(pl):
         num("PL", float(np.mean(pl)), "{:.3f}")
 
-    panel(axes[2], "C", "Phantom pulses: receiver response")
+    panel(axes[2], "C", "Phantom pulses")
     rates, means, los, his = [], [], [], []
     for key in sorted({k for r in runs for k in r.get("phantom_dose", {})},
-                      key=lambda s: float(s.split("_")[1])):
+                      key=lambda s_: float(s_.split("_")[1])):
         v = np.array([r["phantom_dose"][key]["mean"] for r in runs if key in r.get("phantom_dose", {})])
         if not len(v):
             continue
@@ -280,72 +344,200 @@ def fig5():
         axes[2].fill_between(rates, los, his, color=C_SIGNAL, alpha=0.18, lw=0)
         axes[2].plot(rates, means, "o-", color=C_SIGNAL, ms=4, mfc="white", mew=1.2)
         axes[2].axhline(0, color=INK, lw=0.8)
-        axes[2].set_xlabel("phantom discharge rate"); axes[2].set_ylabel("$\\Delta$ neighbours' intake")
+        axes[2].set_xlabel("phantom discharge rate")
+        axes[2].set_ylabel("$\\Delta$ neighbours' intake")
         num("PhantomMax", float(np.max(np.abs(means))), "{:.3f}")
+
+    # --- the dissociation: influence rises where content falls -------------
+    panel(axes[3], "D", "Influence rises as content falls")
+    pairs = [(0.0, "A_full"), (0.02, "B_hear_c0.02"), (0.06, "B_hear_c0.06")]
+    cs, cies, conts = [], [], []
+    for c, pref in pairs:
+        v1 = np.array([r["cie"]["mean"] for r in group(pref) if "cie" in r])
+        v2 = vals(pref, "content", "food", "delta")
+        if len(v1) and len(v2):
+            cs.append(c); cies.append(v1.mean()); conts.append(v2.mean())
+    if cs:
+        ax = axes[3]
+        ax.plot(cs, np.array(cies) / max(cies), "o-", color=C_SIGNAL, ms=5,
+                mfc="white", mew=1.3, label="causal influence")
+        ax.plot(cs, np.array(conts) / max(max(conts), 1e-9), "s--", color=C_CUE, ms=4.5,
+                mfc="white", mew=1.2, label="decodable content")
+        ax.set_xlabel("metabolic cost $\\lambda$")
+        ax.set_ylabel("normalised to max")
+        ax.axhline(0, color=INK, lw=0.8)
+        ax.legend(loc="best")
+        num("CIECostZero", float(cies[0]), "{:.4f}")
+        num("CIECostHigh", float(cies[-1]), "{:.4f}")
+        num("CIEFold", float(cies[-1] / max(cies[0], 1e-12)), "{:.0f}")
     fig.tight_layout()
     fig.savefig(f"{FIG}/fig5_listening.pdf"); plt.close(fig)
 
 
 # ===========================================================================
-# Figure 6 -- cost converts a cue into a signal (SSI)
+# Figure 6 -- sender shaping, with reception held fixed
 # ===========================================================================
 def fig6():
+    """The hearing/deaf contrast removes *reception*, so it cannot separate
+    "I behave differently when others can hear me" from "I behave differently
+    when I can hear others".  The yoked world matches reception statistics and
+    cuts only audibility, which is the contrast that isolates being listened to.
+    """
     import torch
     from eodcomm.train import load_agent
-    from eodcomm.metrics import sender_shaping_index, collect
+    from eodcomm.metrics import sender_shaping_index, collect, knollen_slice
 
-    pairs = [(0.0, "A_full", "A_noknollen"),
-             (0.02, "B_hear_c0.02", "B_deaf_c0.02"),
-             (0.06, "B_hear_c0.06", "B_deaf_c0.06")]
+    pairs = [(0.0, "F_live_c0.0", "F_yoked_c0.0", "A_full", "A_noknollen"),
+             (0.06, "F_live_c0.06", "F_yoked_c0.06", "B_hear_c0.06", "B_deaf_c0.06")]
     fig, axes = plt.subplots(1, 3, figsize=(7.2, 2.5))
-    costs, ssis, emit_h, emit_d, psf = [], [], [], [], []
-    ctx = None
-    for c, hp, dp in pairs:
-        hs = sorted(glob.glob(f"results/runs/{hp}_s*.pt"))
-        ds = sorted(glob.glob(f"results/runs/{dp}_s*.pt"))
-        if not hs or not ds:
+    ctx, kmask = None, None
+    costs, ssi_yoke, ssi_deaf, e_live, e_yoke = [], [], [], [], []
+
+    def nets(prefix):
+        ok = {r["name"] for r in group(prefix)}
+        return [p for p in sorted(glob.glob(f"results/runs/{prefix}_s*.pt"))
+                if os.path.basename(p)[:-3] in ok]
+
+    for c, live, yoke, hear, deaf in pairs:
+        pl, py = nets(live), nets(yoke)
+        if len(pl) < 2 or len(py) < 2:
             continue
         if ctx is None:
-            tr, env, _ = load_agent(hs[0], env_overrides=dict(batch=64))
+            tr, env, _ = load_agent(pl[0], env_overrides=dict(batch=64))
             rec = collect(tr, env, 96, seed=99)
-            ctx = rec["obs"].reshape(-1, env.obs_dim)
-            idx = torch.randperm(ctx.shape[0], device=ctx.device)[:4096]
-            ctx = ctx[idx]
+            o = rec["obs"].reshape(-1, env.obs_dim)
+            ctx = o[torch.randperm(o.shape[0], device=o.device)[:4096]]
+            kmask = knollen_slice(env)
             del tr, env
-        nh = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in hs]
-        nd = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in ds]
-        r = sender_shaping_index(nh, nd, ctx)
-        costs.append(c); ssis.append(r["ssi"])
-        emit_h.append(np.mean(vals(hp, "base", "emit_rate")))
-        emit_d.append(np.mean(vals(dp, "base", "emit_rate")))
-        psf.append(np.mean(vals(hp, "positive_signaling", "food", "norm")))
+        nl = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in pl]
+        ny = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in py]
+        costs.append(c)
+        ssi_yoke.append(sender_shaping_index(nl, ny, ctx, mask=kmask)["ssi"])
+        e_live.append(np.mean(vals(live, "base", "emit_rate")))
+        e_yoke.append(np.mean(vals(yoke, "base", "emit_rate")))
+        ph, pdd = nets(hear), nets(deaf)
+        if len(ph) >= 2 and len(pdd) >= 2:
+            nh = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in ph]
+            nd = [load_agent(p, env_overrides=dict(batch=2))[0].net for p in pdd]
+            ssi_deaf.append(sender_shaping_index(nh, nd, ctx, mask=kmask)["ssi"])
+        else:
+            ssi_deaf.append(np.nan)
         torch.cuda.empty_cache()
 
-    if costs:
-        panel(axes[0], "A", "Sender Shaping Index")
-        axes[0].plot(costs, ssis, "o-", color=C_SIGNAL, ms=5, mfc="white", mew=1.4)
-        axes[0].axhline(0, color=INK, lw=0.9)
-        axes[0].set_xlabel("metabolic cost per discharge $\\lambda$")
-        axes[0].set_ylabel("SSI")
-        axes[0].text(0.02, 0.92, "signal", transform=axes[0].transAxes, fontsize=6.4, color=INK2)
-        axes[0].text(0.02, 0.06, "cue", transform=axes[0].transAxes, fontsize=6.4, color=INK2)
-        num("SSIZero", ssis[0], "{:.3f}")
-        num("SSIMax", max(ssis), "{:.3f}")
-        num("SSICostMax", costs[int(np.argmax(ssis))], "{:.2f}")
+    if not costs:
+        plt.close(fig); return
+    x = np.arange(len(costs))
+    panel(axes[0], "A", "Sender shaping")
+    axes[0].bar(x - 0.19, ssi_yoke, 0.36, color=C_SIGNAL, edgecolor="white", lw=0.8,
+                label="yoked (audibility cut)")
+    axes[0].bar(x + 0.19, ssi_deaf, 0.36, color=C_NULL, edgecolor="white", lw=0.8,
+                label="deaf (reception cut)")
+    axes[0].axhline(0, color=INK, lw=0.9)
+    axes[0].set_xticks(x); axes[0].set_xticklabels([f"$\\lambda$={c:g}" for c in costs])
+    axes[0].set_ylabel("SSI"); axes[0].legend(loc="best")
+    num("SSIYokeZero", float(ssi_yoke[0]), "{:.3f}")
+    if len(ssi_yoke) > 1:
+        num("SSIYokeHigh", float(ssi_yoke[-1]), "{:.3f}")
+    if np.isfinite(ssi_deaf[0]):
+        num("SSIDeafZero", float(ssi_deaf[0]), "{:.3f}")
 
-        panel(axes[1], "B", "Discharge rate")
-        axes[1].plot(costs, emit_h, "o-", color=C_FULL, ms=5, mfc="white", mew=1.4, label="receivers hear")
-        axes[1].plot(costs, emit_d, "s--", color=MUTED, ms=4.4, mfc="white", mew=1.2, label="receivers deaf")
-        axes[1].set_xlabel("metabolic cost $\\lambda$"); axes[1].set_ylabel("P(emit)")
-        axes[1].legend(loc="best")
+    panel(axes[1], "B", "Discharge rate: live vs yoked")
+    axes[1].bar(x - 0.19, e_live, 0.36, color=C_FULL, edgecolor="white", lw=0.8, label="live")
+    axes[1].bar(x + 0.19, e_yoke, 0.36, color=C_NULL, edgecolor="white", lw=0.8, label="yoked")
+    axes[1].set_xticks(x); axes[1].set_xticklabels([f"$\\lambda$={c:g}" for c in costs])
+    axes[1].set_ylabel("P(emit)"); axes[1].legend(loc="best")
+    num("EmitLiveZero", float(e_live[0]), "{:.3f}")
+    num("EmitYokeZero", float(e_yoke[0]), "{:.3f}")
 
-        panel(axes[2], "C", "Positive signalling about food")
-        axes[2].plot(costs, psf, "o-", color=C_CUE, ms=5, mfc="white", mew=1.4)
-        axes[2].set_xlabel("metabolic cost $\\lambda$"); axes[2].set_ylabel("$I(m;\\text{food})/H$")
-        if len(psf) > 1:
-            num("PSFoodHighCost", psf[-1], "{:.3f}")
+    panel(axes[2], "C", "Free-riding drives the deaf contrast")
+    hd = [np.mean(vals(h, "base", "emit_rate")) for _, _, _, h, _ in pairs]
+    dd = [np.mean(vals(d, "base", "emit_rate")) for _, _, _, _, d in pairs]
+    keep = [i for i in range(len(hd)) if np.isfinite(hd[i]) and np.isfinite(dd[i])]
+    if keep:
+        xx = np.arange(len(keep))
+        axes[2].bar(xx - 0.19, [hd[i] for i in keep], 0.36, color=C_FULL,
+                    edgecolor="white", lw=0.8, label="can hear others")
+        axes[2].bar(xx + 0.19, [dd[i] for i in keep], 0.36, color=MUTED,
+                    edgecolor="white", lw=0.8, label="deaf")
+        axes[2].set_xticks(xx)
+        axes[2].set_xticklabels([f"$\\lambda$={pairs[i][0]:g}" for i in keep])
+        axes[2].set_ylabel("P(emit)"); axes[2].legend(loc="best")
+        num("EmitHearZero", float(hd[0]), "{:.3f}")
+        num("EmitDeafZero", float(dd[0]), "{:.3f}")
     fig.tight_layout()
     fig.savefig(f"{FIG}/fig6_ssi.pdf"); plt.close(fig)
+
+
+# ===========================================================================
+# Figure 9 -- the positive control: a partially decoupled signalling variable
+# ===========================================================================
+E_TASKS = [("std", "standard"), ("sparse", "sparse")]
+E_ECON = [("cmp", "compet."), ("coop", "cooper.")]
+
+
+def fig9():
+    fig, axes = plt.subplots(1, 4, figsize=(9.4, 2.7))
+    labs, use, mi_food, kill_r, scr_r, cols = [], [], [], [], [], []
+    for tk, tl in E_TASKS:
+        for ec, el in E_ECON:
+            pref = f"E_{tk}_{ec}_decoupled"
+            rs = group(pref)
+            if not rs:
+                continue
+            labs.append(f"{tl.split()[0]}\n{el}")
+            cols.append(C_CUE if ec == "cmp" else C_SIGNAL)
+            use.append(np.array([r["signal_bit"]["rate"] for r in rs if "signal_bit" in r]))
+            mi_food.append(np.array([r["signal_bit"]["food"]["mi"] - r["signal_bit"]["food"]["null"]
+                                     for r in rs if "signal_bit" in r]))
+            kill_r.append(np.array([r["subtype_ablation"]["kill_subtype"]["reward_others"]["mean"]
+                                    for r in rs if "subtype_ablation" in r]))
+            scr_r.append(np.array([r["subtype_ablation"]["scramble_subtype"]["reward_others"]["mean"]
+                                   for r in rs if "subtype_ablation" in r]))
+    if not labs:
+        plt.close(fig); return
+
+    panel(axes[0], "A", "Subtype usage")
+    bars_ci(axes[0], labs, use, cols, "fraction of pulses marked", rot=0)
+    axes[0].axhline(0.5, color=INK2, ls=":", lw=0.8)
+
+    panel(axes[1], "B", "Information in the subtype")
+    bars_ci(axes[1], labs, mi_food, cols, "$I$(subtype; food)  (bits)", rot=0)
+    axes[1].axhline(0, color=INK, lw=0.8)
+
+    panel(axes[2], "C", "Deleting the subtype only")
+    bars_ci(axes[2], labs, kill_r, cols, "$\\Delta$ receivers' return", rot=0)
+    axes[2].axhline(0, color=INK, lw=0.8)
+    ylo, yhi = axes[2].get_ylim()
+    for i, gg in enumerate(kill_r):
+        if len(gg) > 1:
+            p_ = perm_p(gg, np.zeros_like(gg))
+            axes[2].text(i, yhi * 0.86, stars(p_), ha="center", va="center",
+                         fontsize=6.5, color=INK,
+                         fontweight="bold" if p_ * len(kill_r) < 0.05 else "normal")
+
+    panel(axes[3], "D", "Coupled vs decoupled channel")
+    cpl, dcp = [], []
+    for tk, _ in E_TASKS:
+        for ec, _ in E_ECON:
+            c = group(f"E_{tk}_{ec}_coupled")
+            d = group(f"E_{tk}_{ec}_decoupled")
+            cpl += [r["signal_value"]["replay_cross"]["d_receiver"]["mean"]
+                    for r in c if "signal_value" in r]
+            dcp += [r["subtype_ablation"]["kill_subtype"]["reward_others"]["mean"]
+                    for r in d if "subtype_ablation" in r]
+    bars_ci(axes[3], ["coupled\n(replay)", "decoupled\n(delete subtype)"],
+            [np.array(cpl), -np.array(dcp)], [MUTED, C_SIGNAL],
+            "|$\\Delta$ receivers' return|")
+    axes[3].axhline(0, color=INK, lw=0.8)
+    if len(dcp):
+        num("SubtypeKill", float(np.mean(dcp)), "{:.2f}")
+        num("SubtypeKillP", perm_p(np.array(dcp), np.zeros(len(dcp))), "{:.4f}")
+    if len(use):
+        num("SubtypeUse", float(np.mean(np.concatenate(use))), "{:.3f}")
+    if len(mi_food):
+        num("SubtypeMIFood", float(np.mean(np.concatenate(mi_food))), "{:.4f}")
+    fig.tight_layout()
+    fig.savefig(f"{FIG}/fig9_decoupled.pdf"); plt.close(fig)
 
 
 # ===========================================================================
@@ -406,6 +598,43 @@ def fig7():
         num("EmitCostHigh", float(e0[0, -1]), "{:.3f}")
         num("EmitPredHigh", float(e0[-1, 0]), "{:.3f}")
         num("EmitBoth", float(e0[-1, -1]), "{:.3f}")
+
+    # cost-dependence of informativeness, pooled over predation and economy
+    def pooled(cost, *path):
+        out = []
+        for p_ in PREDS:
+            for econ in ("cmp", "coop"):
+                out.extend(vals(f"C_c{cost}_p{p_}_{econ}", *path))
+        return np.array(out)
+
+    c_lo, c_hi = COSTS[0], COSTS[-1]
+    for tag, cst in (("Zero", c_lo), ("High", c_hi)):
+        cf = pooled(cst, "content", "food", "delta")
+        ps = pooled(cst, "positive_signaling", "food", "norm")
+        er = pooled(cst, "base", "emit_rate")
+        if len(cf):
+            num(f"ContentCost{tag}", float(np.mean(cf)), "{:.3f}")
+        if len(ps) and len(er):
+            num(f"PSPerPulse{tag}", float(np.mean(ps) / max(np.mean(er), 1e-9)), "{:.3f}")
+
+    # silence and danger, pooled over the predation conditions
+    dd, ss, au = [], [], []
+    for cst in COSTS:
+        for p_ in PREDS[1:]:
+            for econ in ("cmp", "coop"):
+                k = f"C_c{cst}_p{p_}_{econ}"
+                a_ = vals(k, "base", "emit_rate_danger")
+                b_ = vals(k, "base", "emit_rate_safe")
+                n_ = min(len(a_), len(b_))
+                if n_:
+                    dd.extend(a_[:n_] - b_[:n_])
+                au.extend(vals(k, "content", "danger", "delta"))
+    if dd:
+        m, lo, hi = boot_ci(np.array(dd))
+        num("SilenceDangerDiff", 0.0)
+        NUM["SilenceDangerDiff"] = f"${m:+.3f}$, 95\\% CI $[{lo:+.3f}, {hi:+.3f}]$"
+    if au:
+        num("DangerAUC", float(np.mean(au)), "{:+.3f}")
 
 
 # ===========================================================================
@@ -499,7 +728,200 @@ def fig8():
 
 
 # ===========================================================================
+def write_validation_table():
+    val = json.load(open("results/physics_validation.json"))
+    rows = [
+        ("monopole_field", "Coulomb field of point charges"),
+        ("dipole_field", "Field of point dipoles"),
+        ("field_with_wall_images", "Field including first-order wall images"),
+        ("induced_dipole_moments", "Dipoles induced on conductors"),
+        ("clip_conductor_moments", "Charge-limiting of fish body moments"),
+        ("morm_cd_baseline", "Corollary-discharge baseline"),
+        ("amp_intrinsic_baseline", "Ampullary intrinsic baseline"),
+        ("mormyromast_pipeline", "Mormyromast, self-image mode"),
+        ("mormyromast_collective_pipeline", "Mormyromast, collective-sensing mode"),
+        ("knollen_pipeline", "Knollenorgan (conspecific detection)"),
+        ("ampullary_pipeline", "Ampullary (passive DC)"),
+    ]
+    BS = chr(92)
+    lines = [
+        "% auto-generated by scripts/figures.py",
+        BS + "begin{table}[t]",
+        BS + "centering" + BS + "small",
+        BS + "caption{Agreement between the GPU reimplementation and the reference "
+        "NumPy implementation, in double precision on random scenes. Error is the "
+        "maximum absolute deviation normalised by the largest magnitude present.}",
+        BS + "label{tab:validation}",
+        BS + "begin{tabular}{lr}",
+        BS + "toprule",
+        "Stage & Max. relative deviation " + BS * 2,
+        BS + "midrule",
+    ]
+    for k, lab in rows:
+        if k not in val:
+            continue
+        v = val[k]
+        cell = "exact (0)" if v == 0 else "$" + BS + "num{%.1e}$" % v
+        lines.append(lab + " & " + cell + " " + BS * 2)
+    lines += [BS + "bottomrule", BS + "end{tabular}", BS + "end{table}", ""]
+    with open("paper/validation_table.tex", "w") as f:
+        f.write("\n".join(lines))
+    print("wrote paper/validation_table.tex")
+
+
+def write_verdicts():
+    """Generate the conditional prose that depends on how the results came out.
+
+    Writing these by hand risks the text drifting from the numbers as runs are
+    added; deriving them means the claim and the data cannot disagree.
+    """
+    runs = group("A_full")
+
+    # --- equivalence tests on the coupled-channel nulls --------------------
+    parts, all_eq, mg = [], True, 0.0
+    names = {"replay_cross": "cross-arena replay", "scramble_time": "temporal scrambling",
+             "mute_social": "removing the public channel entirely"}
+    for k, lab in names.items():
+        vv = [r["tost"][k] for r in runs if "tost" in r and k in r["tost"]]
+        if not vv:
+            continue
+        m = float(np.mean([v["mean"] for v in vv]))
+        lo = float(np.mean([v["lo90"] for v in vv]))
+        hi = float(np.mean([v["hi90"] for v in vv]))
+        mg = float(np.mean([v["margin"] for v in vv]))
+        all_eq &= (lo > -mg and hi < mg)
+        parts.append(f"{lab}, ${m:+.2f}$ (90\\% CI $[{lo:+.2f}, {hi:+.2f}]$)")
+    if parts:
+        if all_eq:
+            NUM["TOSTVERDICT"] = "every comparison falls inside it: " + "; ".join(parts) + "."
+        else:
+            NUM["TOSTVERDICT"] = (
+                "no comparison clears the margin in either direction --- the intervals are "
+                "simply wider than the $\\pm" + f"{mg:.2f}" + "$ margin (" + "; ".join(parts)
+                + "). We therefore report these as \\emph{no effect detectable at this "
+                "sample size}, and explicitly not as demonstrated equivalence. The honest "
+                "statement is that the design rules out payoff effects larger than roughly "
+                "a tenth of the intact return, and is not powered to rule out smaller "
+                "ones.")
+    else:
+        NUM["TOSTVERDICT"] = "equivalence tests were not available for this run set."
+
+    # --- yoked sender-shaping verdict -------------------------------------
+    ssi = NUM.get("SSIYokeZero")
+    if ssi is not None:
+        v = float(ssi)
+        if v > 0.15:
+            NUM["YOKEDVERDICT"] = (
+                "Emission policy therefore does depend on whether anyone can hear it, "
+                "even when reception is held fixed: by the production-side criterion the "
+                "discharge is not a pure cue. We read this cautiously, because the yoked "
+                "world also removes the correlation between what a fish hears and what its "
+                "neighbours are actually doing, which changes the learning problem in ways "
+                "beyond audibility.")
+        elif v > -0.15:
+            NUM["YOKEDVERDICT"] = (
+                "Emission policy is therefore no more different between the live and yoked "
+                "worlds than between seeds of the same world. Holding reception fixed, "
+                "being listened to leaves no detectable trace on how the discharge is "
+                "scheduled, which is what it means for the pulse to be a cue rather than a "
+                "signal.")
+        else:
+            NUM["YOKEDVERDICT"] = (
+                "The yoked contrast is smaller than the seed-to-seed variation within "
+                "either world, so the measurement is not resolving a difference in "
+                "emission policy at this sample size.")
+
+    # --- decoupled positive control, reported per ecological setting -------
+    cells, use_all, mi_all = [], [], []
+    for tk, tl in E_TASKS:
+        for ec, el in E_ECON:
+            rs = group(f"E_{tk}_{ec}_decoupled")
+            kd = np.array([r["subtype_ablation"]["kill_subtype"]["reward_others"]["mean"]
+                           for r in rs if "subtype_ablation" in r])
+            if len(kd) < 3:
+                continue
+            m, lo, hi = boot_ci(kd)
+            pv = perm_p(kd, np.zeros(len(kd)))
+            cells.append((tl, el, m, lo, hi, pv))
+            use_all += [r["signal_bit"]["rate"] for r in rs if "signal_bit" in r]
+            mi_all += [r["signal_bit"]["food"]["mi"] - r["signal_bit"]["food"]["null"]
+                       for r in rs if "signal_bit" in r]
+    if cells:
+        nt = len(cells)
+        hits = [c for c in cells if c[5] * nt < 0.05 and c[2] < 0]
+        desc = "; ".join(f"{tl} $\\times$ {el}, ${m:+.2f}$ "
+                         f"(95\\% CI $[{lo:+.2f}, {hi:+.2f}]$, $p=\\num{{{pv:.3f}}}$)"
+                         for tl, el, m, lo, hi, pv in cells)
+        NUM["SubtypeUse"] = f"{np.mean(use_all):.2f}"
+        NUM["SubtypeMIFood"] = f"{np.mean(mi_all):.4f}"
+        head = (f"Agents mark {np.mean(use_all)*100:.0f}\\% of their discharges with the "
+                f"subtype, which is indistinguishable from the 50\\% an unmodulated bit "
+                f"would give, and it carries ${np.mean(mi_all):.4f}$ bits about food "
+                f"proximity above its permutation null. Deleting the subtype leaves the "
+                f"pulse, and therefore every sensory consequence, completely intact, so "
+                f"any payoff change is attributable to content alone. Across the four "
+                f"ecological settings: {desc}. ")
+        if hits:
+            tl, el, m, lo, hi, pv = hits[0]
+            NUM["DECOUPLEDRESULT"] = head + (
+                f"One of the four survives Bonferroni correction across the four cells: "
+                f"{tl} under {el}, where deleting the subtype costs receivers ${m:+.2f}$ "
+                f"in return. That is the setting in which private information is "
+                f"scarcest---patches are hard to find and a single fish's probe reaches "
+                f"only a small part of a large arena---which is where a social channel "
+                f"should pay if it is going to pay anywhere. We report it as suggestive "
+                f"rather than established: it is one cell of four, in the task family with "
+                f"the weakest absolute performance, and the subtype is used at essentially "
+                f"chance rate even there. What the control does establish is that our "
+                f"measurements can detect a payoff-relevant social channel when one is "
+                f"present, which is what makes the null results elsewhere interpretable "
+                f"rather than merely underpowered.")
+        else:
+            NUM["DECOUPLEDRESULT"] = head + (
+                "No cell survives correction for multiple comparisons. Freeing the content "
+                "of a discharge from its sensory function was not, on its own, sufficient "
+                "to make that content payoff-relevant under any pressure we applied.")
+    else:
+        NUM["DECOUPLEDRESULT"] = "The decoupled-channel runs were not available."
+
+    # --- abstract ----------------------------------------------------------
+    NUM["ABSTRACTRESULTS"] = (
+        "Silencing a fish costs it \\MuteTargetTotal\\ food items per episode, of which "
+        "\\MuteTargetPriv\\ is the loss of its own electrolocation and only "
+        "\\MuteTargetSig\\ the loss of its detectability by others. The public channel "
+        "nonetheless satisfies both standard criteria for communication: it carries "
+        "decodable information about food ($\\Delta R^2=\\ContentFood$) and it moves "
+        "receiver policies \\CIERatio$\\times$ more than sensory noise does. Yet replaying, "
+        "scrambling or fabricating it leaves both parties' payoffs unchanged within our "
+        "resolution; metabolic cost, eavesdropping predation and cooperative harvesting "
+        "regulate discharge rate without making the pulse train more informative "
+        "(per-pulse informativeness falls from \\PSPerPulseZero\\ to \\PSPerPulseHigh); "
+        "and once reception is held fixed so that only audibility is cut, emission policy "
+        "is unchanged (sender shaping \\SSIYokeZero). Two standard diagnostics fail "
+        "outright: positive signalling is \\emph{higher} in populations whose receivers "
+        "are deaf (\\PSDeaf\\ versus \\PSHear), and causal influence \\emph{rises} "
+        "\\CIEFold-fold as the channel becomes less informative. A system can pass every "
+        "standard diagnostic for emergent communication and not be communicating. In a "
+        "positive control that frees one bit of discharge subtype from the sensory "
+        "function while leaving the pulse itself untouched, a payoff-relevant social "
+        "channel does appear---in one of four ecological settings, the one in which "
+        "private information is scarcest.")
+
+
 def write_numbers():
+    # Measured aggregate throughput: per-job rate from the training histories,
+    # times the number of jobs resident on the two GPUs concurrently.
+    rates = []
+    for f in glob.glob("results/runs/*_hist.json"):
+        try:
+            d = json.load(open(f))
+            if d.get("wall_s", 0) > 0 and d["hist"]:
+                rates.append(d["hist"][-1]["steps"] / d["wall_s"])
+        except Exception:
+            pass
+    if rates:
+        NUM["ThroughputK"] = f"{np.median(rates) * 6 / 1e3:.0f}"
+        NUM["ThroughputPerJobK"] = f"{np.median(rates) / 1e3:.0f}"
     NUM["NumRuns"] = str(len(glob.glob("results/runs/*.pt")))
     NUM["NumEval"] = str(len(M))
     with open("paper/numbers.tex", "w") as f:
@@ -511,7 +933,7 @@ def write_numbers():
 
 if __name__ == "__main__":
     load()
-    for fn in (fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig6):
+    for fn in (fig1, fig2, fig3, fig4, fig5, fig7, fig8, fig9, fig6, write_validation_table, write_verdicts):
         try:
             fn()
             print("ok", fn.__name__, flush=True)

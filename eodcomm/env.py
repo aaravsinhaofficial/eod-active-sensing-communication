@@ -62,6 +62,31 @@ class EnvConfig:
     # 2 = conspecific images only
     collective_sensing: int = 1
     illuminate_others: bool = True  # do my pulses light up my neighbours' world?
+    # Training-time control for the Sender Shaping Index: receivers still get
+    # knollen input with the same statistics, but sender identity is permuted
+    # every step, so no sender's pulses contingently reach any particular
+    # receiver.  A sender that only cares about *having* social input should
+    # behave as in the hearing world; one that cares about being listened to
+    # should behave as in the deaf world.
+    scramble_id_always: bool = False
+
+    # --- the decoupled signalling variable (positive control) -------------
+    # A second Bernoulli action: a discharge "subtype" that rides on the pulse.
+    # It reaches conspecific knollenorgans but changes nothing about the
+    # emitter's own reafference, nothing about how the pulse illuminates
+    # neighbours, and nothing about predator detectability.  Sending it still
+    # requires paying for a pulse, so the coupling is partial, not absent: what
+    # is decoupled is the *content*, not the act.
+    signal_channel: bool = False
+    signal_cost: float = 0.0        # bandwidth price, on top of the pulse cost
+
+    # --- yoked reception (the sender-shaping control) ---------------------
+    # Receivers get knollen input drawn from another arena's emission mask, so
+    # reception statistics are matched to the live world while no agent's own
+    # pulses reach anybody.  Contrast with the live world isolates being
+    # listened to from merely having social input -- which `knollen_enabled`
+    # does not, because it removes reception rather than audibility.
+    yoked_knollen: bool = False
     morm_enabled: bool = True
     amp_enabled: bool = True
 
@@ -146,8 +171,10 @@ class FishEnv:
             + 1                          # own size
             + 1                          # bite cooldown
             + 1                          # eat cooldown
+            + (self.n_knollen_slots if cfg.signal_channel else 0)  # heard subtype
         )
-        self.act_dim = 4  # thrust, turn, emit, bite
+        self.n_disc = 3 if cfg.signal_channel else 2
+        self.act_dim = 2 + self.n_disc  # thrust, turn, emit, bite [, signal]
 
         self.g = torch.Generator(device=self.dev)
         self.g.manual_seed(0)
@@ -252,6 +279,7 @@ class FishEnv:
         self.pred_cd = torch.zeros((B, cfg.n_pred), device=self.dev, dtype=self.dt_type)
 
         self.last_act = torch.zeros((B, F, 4), device=self.dev, dtype=self.dt_type)
+        self._sig = torch.zeros((B, F), device=self.dev, dtype=torch.bool)
         self.was_bitten = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.bite_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
         self.eat_cd = torch.zeros((B, F), device=self.dev, dtype=self.dt_type)
@@ -482,6 +510,26 @@ class FishEnv:
             emit_illum = emit_self if self.cfg.illuminate_others else torch.zeros_like(emit_self)
         morm = self._sense_mormyromast(emit_self, emit_illum)
         kno, meta, heard = self._sense_knollen(emit_social, slot_perm)
+        extra = []
+        if self.cfg.signal_channel:
+            idx = self._offdiag_index()
+            sg = getattr(self, "_sig", None)
+            if sg is None:
+                sg = torch.zeros((self.B, self.F), device=self.dev, dtype=torch.bool)
+            if self.cfg.yoked_knollen and hasattr(self, "_yoke_perm"):
+                sg = sg[self._yoke_perm]
+            sgf = (sg.to(self.dt_type) * 2 - 1)[:, None, :].expand(self.B, self.F, self.F)
+            sgf = torch.gather(sgf, 2, idx[None].expand(self.B, self.F, self.F - 1))
+            if slot_perm is not None:
+                sgf = torch.gather(sgf, 2, slot_perm)
+            sgf = sgf * heard             # audible only when the pulse was heard
+            # eval-time ablations of the decoupled variable, leaving the pulse
+            # (and therefore all sensing) completely untouched
+            if getattr(self, "_kill_subtype", False):
+                sgf = torch.zeros_like(sgf)
+            elif getattr(self, "_scramble_subtype", False):
+                sgf = sgf[torch.randperm(self.B, generator=self.g, device=self.dev)]
+            extra.append(sgf)
         amp = self._sense_ampullary(emit_social)
         self._last_heard = heard
         obs = torch.cat(
@@ -495,6 +543,7 @@ class FishEnv:
                 self.size[..., None],
                 self.bite_cd[..., None],
                 self.eat_cd[..., None],
+                *extra,
             ],
             dim=-1,
         )
@@ -511,8 +560,14 @@ class FishEnv:
         action = action.clamp(-1, 1)
         emit = (action[..., 2] > 0) & cfg.eod_allowed
         bite = action[..., 3] > 0
+        sig = (action[..., 4] > 0) if cfg.signal_channel else torch.zeros_like(emit)
+        self._sig = sig & emit          # the subtype rides on an actual discharge
 
         emit_self, emit_illum, emit_social, slot_perm = self._apply_channel(emit, channel)
+        if cfg.scramble_id_always and slot_perm is None:
+            slot_perm = torch.argsort(
+                torch.rand((B, F, F - 1), generator=self.g, device=self.dev), dim=-1
+            )
         self._last_emit_self = emit_self
         self._last_emit_social = emit_social
 
@@ -601,15 +656,18 @@ class FishEnv:
         r = r + cfg.r_bite * bit_other
         r = r + cfg.r_collision * collided.to(self.dt_type)
         r = r - cfg.eod_cost * emit_self.to(self.dt_type)
+        if cfg.signal_channel and cfg.signal_cost:
+            r = r - cfg.signal_cost * self._sig.to(self.dt_type)
         r = r - cfg.predation * struck
 
-        self.last_act = action
+        self.last_act = action[..., :4]
         self.t += 1
         obs = self._observe(emit_self, emit_social, slot_perm, emit_illum)
         done = self.t >= cfg.episode_len
         info = {
             "emit": emit,
             "emit_self": emit_self,
+            "signal": self._sig,
             "emit_illum": emit_illum,
             "emit_social": emit_social,
             "ate": n_ate,
@@ -671,6 +729,14 @@ class FishEnv:
         """Split one motor act into its private and public consequences."""
         B, F = self.B, self.F
         illum_default = emit if self.cfg.illuminate_others else torch.zeros_like(emit)
+        if self.cfg.yoked_knollen:
+            # what each receiver hears comes from another arena; the geometry
+            # (bearing, distance) is still its own, only the contingency is cut
+            perm = torch.randperm(self.B, generator=self.g, device=self.dev)
+            self._yoke_perm = perm
+            heard_mask = emit[perm]
+            if spec is None or spec.mode == "intact":
+                return emit, illum_default, heard_mask, None
         if spec is None or spec.mode == "intact":
             return emit, illum_default, emit, None
 

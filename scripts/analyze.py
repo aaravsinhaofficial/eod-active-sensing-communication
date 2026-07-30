@@ -25,9 +25,10 @@ sys.path.insert(0, os.path.join(HERE, ".."))
 from eodcomm.train import load_agent  # noqa: E402
 from eodcomm.metrics import (  # noqa: E402
     causal_influence, collect, decode_content, positive_listening, positive_signaling,
+    signal_bit_metrics,
 )
 from eodcomm.interventions import (  # noqa: E402
-    channel_battery, decompose_muting, paired_diff, signal_value,
+    channel_battery, decompose_muting, paired_diff, signal_value, tost_equivalence,
 )
 
 
@@ -73,6 +74,9 @@ def eval_run(path, batch=192, steps=512, seed=7, do_channels=True):
         out["base"]["emit_rate_safe"] = rec["emit"][~near].mean().item()
 
     out["positive_signaling"] = positive_signaling(rec)
+    sb = signal_bit_metrics(rec)
+    if sb is not None:
+        out["signal_bit"] = sb
     out["content"] = decode_content(rec)
 
     if do_channels:
@@ -88,6 +92,25 @@ def eval_run(path, batch=192, steps=512, seed=7, do_channels=True):
         # per-arena arrays that were only needed for the paired statistics
         out["channels"] = {k: {kk: vv for kk, vv in v.items() if kk != "_per_arena"}
                            for k, v in res.items()}
+        if "kill_subtype" in res:
+            # the intact pulse, only the decoupled content removed
+            base_r = abs(res["intact"]["reward_others"]) * 0.05 + 1e-9
+            out["subtype_ablation"] = {
+                k: {
+                    "reward_others": paired_diff(res, k, "intact", "reward_others"),
+                    "reward_target": paired_diff(res, k, "intact", "reward_target"),
+                    "eaten_group": paired_diff(res, k, "intact", "eaten_group"),
+                    "tost_reward_others": tost_equivalence(res, k, "intact",
+                                                           "reward_others", base_r),
+                }
+                for k in ("kill_subtype", "scramble_subtype")
+            }
+        # equivalence tests on the coupled-channel nulls, against a 5% margin
+        marg = abs(res["intact"]["reward_others"]) * 0.05 + 1e-9
+        out["tost"] = {
+            k: tost_equivalence(res, k, "intact", "reward_others", marg)
+            for k in ("replay_cross", "scramble_time", "mute_social") if k in res
+        }
         out["phantom_dose"] = {
             k: paired_diff(res, k, "intact", "eaten_others")
             for k in res if k.startswith("phantom_")

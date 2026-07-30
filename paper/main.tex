@@ -7,7 +7,7 @@
 \usepackage{booktabs}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{authblk}
+% authblk unavailable in this TeX installation
 \usepackage[numbers,sort&compress]{natbib}
 \usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
 \usepackage{microtype}
@@ -23,12 +23,13 @@
 \newcommand{\dosim}{\mathrm{do}}
 \newcommand{\KL}{D_{\mathrm{KL}}}
 
-\title{\bfseries When does active sensing become communication?\\
-\large Dissociating the private, exploitable, and signalling consequences of an
-electric discharge in simulated weakly electric fish}
+\title{\bfseries Active sensing is not communication\\
+\large Causal auditing of emergent signals in embodied multi-agent
+reinforcement learning, and the channel factorisation that lets signalling
+appear}
 
-\author[1]{}
-\affil[1]{}
+\author{}
+
 \date{}
 
 \begin{document}
@@ -63,8 +64,10 @@ individual identity.
 %
 \ABSTRACTRESULTS
 %
-Together these results replace an effect-based definition of communication with a
-causal one, and locate the conditions under which a probe becomes a promise.
+Together these results show that standard emergent-communication diagnostics can
+misclassify an exploited sensory cue as communication, and identify channel
+factorisation---rather than ecological pressure---as what lets a distinct social
+function appear.
 \end{abstract}
 
 \section{Introduction}
@@ -157,7 +160,21 @@ switchable and ask what changes.
       predators that localise prey by their discharges, cooperative versus
       competitive harvests, tunable social range, and persistent identity, and
       map the resulting regimes.
+\item A \textbf{positive control}. Because a negative result is only as strong as
+      the positive control beside it, we also give the agents a signalling
+      variable that is \emph{partially decoupled} from sensing---a discharge
+      subtype that rides on the pulse, so sending still costs a pulse, but whose
+      value changes nothing about the emitter's own electric image, nothing
+      about how the pulse illuminates neighbours, and nothing about predator
+      detectability. This is the manipulation that distinguishes ``pressure does
+      not create signals here'' from ``signals cannot be measured here''.
 \end{enumerate}
+
+\paragraph{A note on wording.} Our populations adapt within a training run by
+policy-gradient learning under a fixed reward; we do not run an evolutionary
+outer loop over heritable traits. We therefore write \emph{emerge under learning}
+throughout, and reserve claims about evolutionary history for the Discussion,
+where we say explicitly what our design can and cannot license.
 
 \input{results}
 

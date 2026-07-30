@@ -5,12 +5,19 @@ The operational definition used by \citet{singh2025active}---an \eod\ that
 conspecifics detect and that changes their behaviour---is satisfied in our model
 at every metabolic cost we tested, including zero. It is satisfied because the
 knollenorgan channel really does carry information and receivers really do
-respond to it. But at zero cost the emission policy is statistically
-indistinguishable between a world where receivers hear and a world where they are
-deaf. Under \citeauthor{scottphillips2008defining}'s criterion, that is a cue:
-the pulse is produced for the emitter's own sensing and others exploit it. The
-effect-based definition and the production-based definition disagree, and they
-disagree in the regime that the original model occupies.
+respond to it. Yet the same channel has no detectable consequence for anyone's
+payoff: replaying, scrambling or fabricating it leaves both parties' returns
+inside a \SI{5}{\percent} equivalence margin. A system can pass every standard
+diagnostic for communication and still not be communicating.
+
+Establishing the production-side half of the argument turned out to need more
+care than we first gave it. Disabling knollenorgans removes \emph{reception}, so
+a hearing/deaf contrast asks whether a fish behaves differently when it can hear
+others---not whether it behaves differently when others can hear \emph{it}. Those
+are different questions, and the first is contaminated by free-riding: a fish
+that can hear its neighbours' probes cuts its own costly sampling, which is what
+we in fact observe. The control that isolates being listened to has to hold
+reception fixed and cut audibility, which is what our yoked condition does.
 
 \paragraph{The muting confound.}
 Silencing a fish is the natural intervention and it is the one available in real
@@ -23,38 +30,64 @@ averages over all three. The same caution applies to real ablation work: an
 \eod-silenced \emph{Gnathonemus} is not a fish with its telephone taken away, it is
 a fish that has been blinded and has stopped lighting the room for everyone else.
 
-\paragraph{Why cost is the operator that converts a cue into a signal.}
-When pulses are free there is no reason to allocate them, and a policy that
-discharges at a roughly constant rate is as good as any other. The rate carries
-information about the emitter's situation only incidentally, through whatever
-weak state-dependence the encoder happens to learn. Imposing a metabolic price
-makes the pulse train a budget, and a budget must be spent where it pays. That
-allocation is what makes the train diagnostic of the emitter's state, and it is
-also what exposes the emission policy to selection on the receiver's response.
-This is the mechanism behind the classical costly-signalling results
-\citep{zahavi1975mate,grafen1990biological,szamado2011cost}, but arrived at from
-the other direction: not ``cost enforces honesty in an existing signal'' but
-``cost creates the signal by forcing a probe schedule to become informative.''
+\paragraph{Cost does not manufacture semantics.}
+It is natural to expect that pricing a pulse would turn a probe schedule into an
+informative one: a budget has to be spent where it pays, and that allocation
+should make the train diagnostic of the emitter's state. That is not what
+happens. Across the whole cost range the pulse train becomes rarer and
+\emph{less} informative about every target we decoded, and it stays less
+informative after normalising per pulse. The learned response to a price is a
+lower baseline rate, not a smarter schedule. Whatever costly signalling does in
+the classical models
+\citep{zahavi1975mate,grafen1990biological,szamado2011cost}, it presupposes a
+signal whose honesty is at stake; it does not by itself bring one into being.
 
-\paragraph{Silence as a signal.}
-Under predation the informative variable inverts. A fish that goes quiet when a
-predator is near produces a pulse train whose \emph{gaps} correlate with danger,
-and receivers with access only to the public channel can decode that. Cessation of
-discharge is a well-documented behaviour in mormyrids, both as a predator-avoidance
-response and as a submissive display \citep{stoddard1999predation,moller1989electric}.
-Our model reproduces both without either being built in: submissive silence appears
-because subordinate fish that discharge near a dominant get bitten, and cryptic
-silence appears because the predator is guided by discharges.
+What we should not conclude is that a binary pulse leaves no room for a code. A
+binary event repeated in continuous time supports a large space of temporal
+codes---inter-pulse intervals, bursts, pauses, event-locked patterns---and
+mormyrid communication is known to use pulse timing and waveform identity
+\citep{baker2013multiplexed,carlson2004stereotyped,hopkins1988neuroethology}. Our
+agents \emph{failed to exploit} the temporal code available to them under the
+pressures we applied. That is a claim about what learning found, not about what
+the channel permits.
+
+\paragraph{Silence tracks the regime, not the moment.}
+Cessation of discharge is well documented in mormyrids, both as a
+predator-avoidance response and as a submissive display
+\citep{stoddard1999predation,moller1989electric}, and we expected the model to
+reproduce a momentary version of it: quiet when the predator is close, loud when
+it is far. It does not. Discharge probability under predation is essentially the
+same whether or not a predator is within \SI{25}{\centi\metre}
+(\SilenceDangerDiff), and danger is close to undecodable from the public channel
+(\SI{\DangerAUC}{} above the time-shifted baseline in AUC). What the agents learn
+is a lower \emph{baseline} rate wherever predators exist at all, and that
+suffices---mortality falls with it, so crypsis works without any moment-to-moment
+timing.
+
+This is a substantive difference from the biology, and the likely reason is
+sensory: our predator becomes passively detectable only at about
+\SI{25}{\centi\metre} while it detects discharges out to \SI{60}{\centi\metre}, so
+a fish usually has no warning to respond to. A prey animal that cannot see the
+predator coming can only manage its average exposure. Testing the momentary
+version of the behaviour would need a longer-range warning cue.
 
 \paragraph{Signalling as a public good and a public hazard.}
 Two externalities operate in opposite directions and neither is in the reward
 function. A discharge illuminates neighbours' worlds, which helps them; it also
 jams their passive ampullary sense and draws an electroreceptive predator toward
-the whole group, which harms them. The balance between these determines whether
-the population settles into loud collective sensing or quiet crypsis, and it does
-so without any agent representing the group's welfare. This is worth emphasising
-because it is a route to collective signalling behaviour that requires neither
-kin selection nor reciprocity---only shared physics.
+the whole group, which harms them. Cooperative harvesting sustains a higher
+discharge rate than competition at matched cost, which is consistent with the
+public-good component being internalised when the harvest is shared.
+
+We are careful not to state that as a mechanism. Our channel interventions found
+no detectable payoff consequence of the public channel, so we cannot
+simultaneously claim that neighbours benefit enough from a pulse to explain the
+rate difference. The higher cooperative rate may instead reflect altered movement
+and encounter distributions, different private sensing requirements under a
+shared harvest, or a social effect below our resolution. Establishing the
+public-good account would require showing causally that the rate difference
+depends on neighbours receiving the pulses, and that experiment is not in this
+paper.
 
 \paragraph{Relation to emergent-communication work.}
 Most emergent-communication studies equip agents with a dedicated, costless,
@@ -80,19 +113,23 @@ We list these plainly because several of them bound the claims above.
       analogue: it asks whether the emission policy that learning arrives at
       depends on whether receivers respond. A genuine evolutionary outer loop
       over heritable emission traits would test the criterion directly, and we did
-      not run one. All ``evolve'' language in this paper should be read as
-      ``adapt under selection by the learning process.''
+      not run one. We write ``emerge under learning'' throughout rather than
+      ``evolve''.
 \item \textbf{One arena scale, one group size.} Everything is measured with four
       fish in a $60\times\SI{60}{\centi\metre}$ arena, in which the knollenorgan
       channel at unit gain reaches every conspecific. The range sweep partially
       addresses this, but group size is not varied, and the upstream model
       randomises arena size in a way we deliberately do not.
-\item \textbf{Pulses are binary and fixed-amplitude.} Real fish modulate amplitude
-      and produce structured inter-pulse-interval patterns, chirps and rises, and
-      amplitude is the variable that carries the honest size information in
-      \citet{gavassa2012signal}. Our knollenorgan channel is all-or-none, as
-      upstream, so amplitude signalling is structurally impossible here. The
-      honesty results therefore concern rate and timing only.
+\item \textbf{Pulses are binary and fixed-amplitude.} Mormyrid electric
+      communication uses inter-pulse-interval patterning and species- and
+      individual-specific waveform structure
+      \citep{baker2013multiplexed,carlson2004stereotyped}; in wave-type
+      gymnotiforms, amplitude modulations carry honest size information
+      \citep{gavassa2012signal}. Our knollenorgan channel is all-or-none, as
+      upstream, so waveform and amplitude signalling are structurally impossible
+      in the coupled condition. This is precisely the limitation the decoupled
+      condition is designed to lift, and it lifts only the crudest version of it:
+      one bit of subtype, not a graded waveform.
 \item \textbf{Episodes are short.} 512 steps is about \SI{6}{\second} of fish time.
       Dominance relationships in real fish are established over much longer
       horizons, so the dominance-related results should be read as

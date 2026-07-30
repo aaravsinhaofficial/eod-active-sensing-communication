@@ -1,0 +1,4266 @@
+{
+  "jobs": [
+    {
+      "name": "A_full_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_full_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_full_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_full_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_full_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_full_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ]
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noknollen_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noillum_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "illuminate_others": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_private_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "knollen_enabled": false,
+        "illuminate_others": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_noself_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "collective_sensing": 2
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "A_silent_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_allowed": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.02_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.02_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "knollen_enabled": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_hear_c0.06_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s3",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 3,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s4",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 4,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "B_deaf_c0.06_s5",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.06,
+        "knollen_enabled": false
+      },
+      "seed": 5,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.01,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.02,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 0.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 5.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 0.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.08,
+        "predation": 20.0,
+        "shared_food": 1.0,
+        "pred_detect_cm": 60.0,
+        "pred_speed_cm": 0.45
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.0_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.0_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.0_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.04_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.04_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_idshuf_c0.04_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "persistent_identity": false,
+        "size_mode": "uniform"
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.0_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.03
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.0_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.03
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.0_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.03
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.04_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.03
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.04_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.03
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.03_c0.04_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.03
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.0_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.003
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.0_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.003
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.0_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.0,
+        "knollen_gain": 0.003
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.04_s0",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.003
+      },
+      "seed": 0,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.04_s1",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.003
+      },
+      "seed": 1,
+      "steps": 18000000,
+      "out": "results/runs"
+    },
+    {
+      "name": "D_range0.003_c0.04_s2",
+      "env_kwargs": {
+        "n_fish": 4,
+        "n_food": 48,
+        "n_patches": 4,
+        "episode_len": 512,
+        "batch": 512,
+        "arena_cm": [
+          60.0,
+          60.0
+        ],
+        "eod_cost": 0.04,
+        "knollen_gain": 0.003
+      },
+      "seed": 2,
+      "steps": 18000000,
+      "out": "results/runs"
+    }
+  ],
+  "done": [
+    {
+      "name": "A_full_s0",
+      "ok": true,
+      "sec": 183.16275644302368
+    },
+    {
+      "name": "A_full_s1",
+      "ok": true,
+      "sec": 183.16203379631042
+    },
+    {
+      "name": "A_full_s2",
+      "ok": true,
+      "sec": 183.16128587722778
+    },
+    {
+      "name": "A_full_s3",
+      "ok": true,
+      "sec": 183.1605043411255
+    },
+    {
+      "name": "A_full_s4",
+      "ok": true,
+      "sec": 183.15974640846252
+    },
+    {
+      "name": "A_full_s5",
+      "ok": true,
+      "sec": 183.1589207649231
+    },
+    {
+      "name": "A_noknollen_s3",
+      "ok": true,
+      "sec": 183.1504509449005
+    },
+    {
+      "name": "A_noknollen_s4",
+      "ok": true,
+      "sec": 183.1497266292572
+    },
+    {
+      "name": "A_noknollen_s5",
+      "ok": true,
+      "sec": 183.14896821975708
+    },
+    {
+      "name": "A_noknollen_s1",
+      "ok": true,
+      "sec": 186.15805912017822
+    },
+    {
+      "name": "A_noknollen_s2",
+      "ok": true,
+      "sec": 186.1573097705841
+    },
+    {
+      "name": "A_noknollen_s0",
+      "ok": true,
+      "sec": 189.1640658378601
+    },
+    {
+      "name": "A_noillum_s0",
+      "ok": true,
+      "sec": 183.15479969978333
+    },
+    {
+      "name": "A_noillum_s1",
+      "ok": true,
+      "sec": 183.15402913093567
+    },
+    {
+      "name": "A_noillum_s2",
+      "ok": true,
+      "sec": 183.1532325744629
+    },
+    {
+      "name": "A_noillum_s3",
+      "ok": true,
+      "sec": 183.1548192501068
+    },
+    {
+      "name": "A_noillum_s4",
+      "ok": true,
+      "sec": 183.15402841567993
+    },
+    {
+      "name": "A_noillum_s5",
+      "ok": true,
+      "sec": 183.15424227714539
+    },
+    {
+      "name": "A_private_s0",
+      "ok": true,
+      "sec": 183.15780591964722
+    },
+    {
+      "name": "A_private_s1",
+      "ok": true,
+      "sec": 183.1570291519165
+    },
+    {
+      "name": "A_private_s2",
+      "ok": true,
+      "sec": 183.1561267375946
+    },
+    {
+      "name": "A_private_s3",
+      "ok": true,
+      "sec": 189.16346287727356
+    },
+    {
+      "name": "A_private_s4",
+      "ok": true,
+      "sec": 189.1626935005188
+    },
+    {
+      "name": "A_private_s5",
+      "ok": true,
+      "sec": 189.16407823562622
+    },
+    {
+      "name": "A_noself_s0",
+      "ok": true,
+      "sec": 180.15875482559204
+    },
+    {
+      "name": "A_noself_s1",
+      "ok": true,
+      "sec": 180.1579282283783
+    },
+    {
+      "name": "A_noself_s2",
+      "ok": true,
+      "sec": 180.15710425376892
+    },
+    {
+      "name": "A_noself_s3",
+      "ok": true,
+      "sec": 177.15567564964294
+    },
+    {
+      "name": "A_noself_s4",
+      "ok": true,
+      "sec": 177.15488624572754
+    },
+    {
+      "name": "A_noself_s5",
+      "ok": true,
+      "sec": 177.15356469154358
+    },
+    {
+      "name": "A_silent_s0",
+      "ok": true,
+      "sec": 183.15216827392578
+    },
+    {
+      "name": "A_silent_s1",
+      "ok": true,
+      "sec": 183.1513319015503
+    },
+    {
+      "name": "A_silent_s2",
+      "ok": true,
+      "sec": 183.1505138874054
+    },
+    {
+      "name": "A_silent_s3",
+      "ok": true,
+      "sec": 180.14925956726074
+    },
+    {
+      "name": "A_silent_s4",
+      "ok": true,
+      "sec": 180.1482493877411
+    },
+    {
+      "name": "A_silent_s5",
+      "ok": true,
+      "sec": 180.1507008075714
+    },
+    {
+      "name": "B_hear_c0.02_s0",
+      "ok": true,
+      "sec": 180.15620398521423
+    },
+    {
+      "name": "B_hear_c0.02_s1",
+      "ok": true,
+      "sec": 180.15543413162231
+    },
+    {
+      "name": "B_hear_c0.02_s2",
+      "ok": true,
+      "sec": 180.1546392440796
+    },
+    {
+      "name": "B_hear_c0.02_s3",
+      "ok": true,
+      "sec": 180.15706419944763
+    },
+    {
+      "name": "B_hear_c0.02_s4",
+      "ok": true,
+      "sec": 180.1562488079071
+    },
+    {
+      "name": "B_hear_c0.02_s5",
+      "ok": true,
+      "sec": 180.15683484077454
+    },
+    {
+      "name": "B_deaf_c0.02_s0",
+      "ok": true,
+      "sec": 180.1473264694214
+    },
+    {
+      "name": "B_deaf_c0.02_s1",
+      "ok": true,
+      "sec": 183.15015172958374
+    },
+    {
+      "name": "B_deaf_c0.02_s2",
+      "ok": true,
+      "sec": 183.14915227890015
+    },
+    {
+      "name": "B_deaf_c0.02_s3",
+      "ok": true,
+      "sec": 180.14491534233093
+    },
+    {
+      "name": "B_deaf_c0.02_s4",
+      "ok": true,
+      "sec": 180.14408159255981
+    },
+    {
+      "name": "B_deaf_c0.02_s5",
+      "ok": true,
+      "sec": 180.14773726463318
+    },
+    {
+      "name": "B_hear_c0.06_s0",
+      "ok": true,
+      "sec": 180.15503764152527
+    },
+    {
+      "name": "B_hear_c0.06_s1",
+      "ok": true,
+      "sec": 180.1554455757141
+    },
+    {
+      "name": "B_hear_c0.06_s2",
+      "ok": true,
+      "sec": 180.1546287536621
+    },
+    {
+      "name": "B_hear_c0.06_s3",
+      "ok": true,
+      "sec": 180.15379095077515
+    },
+    {
+      "name": "B_hear_c0.06_s4",
+      "ok": true,
+      "sec": 180.15298581123352
+    },
+    {
+      "name": "B_hear_c0.06_s5",
+      "ok": true,
+      "sec": 180.1549699306488
+    },
+    {
+      "name": "B_deaf_c0.06_s0",
+      "ok": true,
+      "sec": 195.19183254241943
+    },
+    {
+      "name": "B_deaf_c0.06_s1",
+      "ok": true,
+      "sec": 198.19311571121216
+    },
+    {
+      "name": "B_deaf_c0.06_s2",
+      "ok": true,
+      "sec": 198.19232320785522
+    },
+    {
+      "name": "B_deaf_c0.06_s3",
+      "ok": true,
+      "sec": 198.19151759147644
+    },
+    {
+      "name": "B_deaf_c0.06_s4",
+      "ok": true,
+      "sec": 198.19071745872498
+    },
+    {
+      "name": "B_deaf_c0.06_s5",
+      "ok": true,
+      "sec": 198.1932544708252
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s0",
+      "ok": true,
+      "sec": 195.17023181915283
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s1",
+      "ok": true,
+      "sec": 198.17537117004395
+    },
+    {
+      "name": "C_c0.0_p0.0_cmp_s2",
+      "ok": true,
+      "sec": 198.174574136734
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s0",
+      "ok": true,
+      "sec": 198.17371368408203
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s1",
+      "ok": true,
+      "sec": 198.17290019989014
+    },
+    {
+      "name": "C_c0.0_p0.0_coop_s2",
+      "ok": true,
+      "sec": 198.17352056503296
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s0",
+      "ok": true,
+      "sec": 198.18561339378357
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s0",
+      "ok": true,
+      "sec": 198.18328595161438
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s1",
+      "ok": true,
+      "sec": 201.1889374256134
+    },
+    {
+      "name": "C_c0.0_p5.0_cmp_s2",
+      "ok": true,
+      "sec": 201.1880965232849
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s1",
+      "ok": true,
+      "sec": 201.18639469146729
+    },
+    {
+      "name": "C_c0.0_p5.0_coop_s2",
+      "ok": true,
+      "sec": 201.18938207626343
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s0",
+      "ok": true,
+      "sec": 198.19572186470032
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s1",
+      "ok": true,
+      "sec": 198.19242405891418
+    },
+    {
+      "name": "C_c0.0_p20.0_cmp_s2",
+      "ok": true,
+      "sec": 201.19617819786072
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s0",
+      "ok": true,
+      "sec": 201.19536185264587
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s1",
+      "ok": true,
+      "sec": 201.19454312324524
+    },
+    {
+      "name": "C_c0.0_p20.0_coop_s2",
+      "ok": true,
+      "sec": 201.20204520225525
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s0",
+      "ok": true,
+      "sec": 195.18566942214966
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s1",
+      "ok": true,
+      "sec": 195.18872213363647
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s1",
+      "ok": true,
+      "sec": 195.18681144714355
+    },
+    {
+      "name": "C_c0.01_p0.0_cmp_s2",
+      "ok": true,
+      "sec": 198.19132924079895
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s0",
+      "ok": true,
+      "sec": 198.19047451019287
+    },
+    {
+      "name": "C_c0.01_p0.0_coop_s2",
+      "ok": true,
+      "sec": 198.17511820793152
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s0",
+      "ok": true,
+      "sec": 198.17791628837585
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s1",
+      "ok": true,
+      "sec": 201.17880392074585
+    },
+    {
+      "name": "C_c0.01_p5.0_cmp_s2",
+      "ok": true,
+      "sec": 198.1757800579071
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s0",
+      "ok": true,
+      "sec": 201.1784119606018
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s1",
+      "ok": true,
+      "sec": 201.17726492881775
+    },
+    {
+      "name": "C_c0.01_p5.0_coop_s2",
+      "ok": true,
+      "sec": 201.1784040927887
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s0",
+      "ok": true,
+      "sec": 198.17959117889404
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s1",
+      "ok": true,
+      "sec": 198.18178629875183
+    },
+    {
+      "name": "C_c0.01_p20.0_cmp_s2",
+      "ok": true,
+      "sec": 198.1820945739746
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s0",
+      "ok": true,
+      "sec": 201.18497252464294
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s1",
+      "ok": true,
+      "sec": 201.18402528762817
+    },
+    {
+      "name": "C_c0.01_p20.0_coop_s2",
+      "ok": true,
+      "sec": 201.18328833580017
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s0",
+      "ok": true,
+      "sec": 195.1849069595337
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s1",
+      "ok": true,
+      "sec": 198.18767857551575
+    },
+    {
+      "name": "C_c0.02_p0.0_cmp_s2",
+      "ok": true,
+      "sec": 198.18799257278442
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s0",
+      "ok": true,
+      "sec": 198.19572114944458
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s1",
+      "ok": true,
+      "sec": 198.19490575790405
+    },
+    {
+      "name": "C_c0.02_p0.0_coop_s2",
+      "ok": true,
+      "sec": 198.19498944282532
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s0",
+      "ok": true,
+      "sec": 195.18880915641785
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s1",
+      "ok": true,
+      "sec": 198.1861891746521
+    },
+    {
+      "name": "C_c0.02_p5.0_cmp_s2",
+      "ok": true,
+      "sec": 201.1893482208252
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s0",
+      "ok": true,
+      "sec": 204.182448387146
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s1",
+      "ok": true,
+      "sec": 204.18164491653442
+    },
+    {
+      "name": "C_c0.02_p5.0_coop_s2",
+      "ok": true,
+      "sec": 201.1681408882141
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s0",
+      "ok": true,
+      "sec": 198.1753306388855
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s1",
+      "ok": true,
+      "sec": 198.17867708206177
+    },
+    {
+      "name": "C_c0.02_p20.0_cmp_s2",
+      "ok": true,
+      "sec": 198.17735981941223
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s0",
+      "ok": true,
+      "sec": 201.18183588981628
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s1",
+      "ok": true,
+      "sec": 201.18085885047913
+    },
+    {
+      "name": "C_c0.02_p20.0_coop_s2",
+      "ok": true,
+      "sec": 201.1797502040863
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s0",
+      "ok": true,
+      "sec": 195.17878437042236
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s1",
+      "ok": true,
+      "sec": 195.1788215637207
+    },
+    {
+      "name": "C_c0.04_p0.0_cmp_s2",
+      "ok": true,
+      "sec": 195.17818665504456
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s0",
+      "ok": true,
+      "sec": 198.17842435836792
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s1",
+      "ok": true,
+      "sec": 198.17731308937073
+    },
+    {
+      "name": "C_c0.04_p0.0_coop_s2",
+      "ok": true,
+      "sec": 198.17621564865112
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s0",
+      "ok": true,
+      "sec": 198.17570734024048
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s1",
+      "ok": true,
+      "sec": 198.18183064460754
+    },
+    {
+      "name": "C_c0.04_p5.0_cmp_s2",
+      "ok": true,
+      "sec": 201.18630123138428
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s1",
+      "ok": true,
+      "sec": 201.18781661987305
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s0",
+      "ok": true,
+      "sec": 204.19328665733337
+    },
+    {
+      "name": "C_c0.04_p5.0_coop_s2",
+      "ok": true,
+      "sec": 204.19163632392883
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s0",
+      "ok": true,
+      "sec": 198.17883968353271
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s1",
+      "ok": true,
+      "sec": 198.17491936683655
+    },
+    {
+      "name": "C_c0.04_p20.0_cmp_s2",
+      "ok": true,
+      "sec": 201.17584228515625
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s0",
+      "ok": true,
+      "sec": 198.17345643043518
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s1",
+      "ok": true,
+      "sec": 201.17412400245667
+    },
+    {
+      "name": "C_c0.04_p20.0_coop_s2",
+      "ok": true,
+      "sec": 201.17325568199158
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s0",
+      "ok": true,
+      "sec": 195.16483783721924
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s1",
+      "ok": true,
+      "sec": 195.16253757476807
+    },
+    {
+      "name": "C_c0.08_p0.0_cmp_s2",
+      "ok": true,
+      "sec": 195.16235184669495
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s0",
+      "ok": true,
+      "sec": 192.1571865081787
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s1",
+      "ok": true,
+      "sec": 198.16432642936707
+    },
+    {
+      "name": "C_c0.08_p0.0_coop_s2",
+      "ok": true,
+      "sec": 198.16352772712708
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s0",
+      "ok": true,
+      "sec": 192.16258454322815
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s1",
+      "ok": true,
+      "sec": 189.16176772117615
+    },
+    {
+      "name": "C_c0.08_p5.0_cmp_s2",
+      "ok": true,
+      "sec": 189.16422200202942
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s0",
+      "ok": true,
+      "sec": 183.16218304634094
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s1",
+      "ok": true,
+      "sec": 186.163147687912
+    },
+    {
+      "name": "C_c0.08_p5.0_coop_s2",
+      "ok": true,
+      "sec": 186.162282705307
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s0",
+      "ok": true,
+      "sec": 183.16162014007568
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s1",
+      "ok": true,
+      "sec": 180.15887570381165
+    },
+    {
+      "name": "C_c0.08_p20.0_cmp_s2",
+      "ok": true,
+      "sec": 180.15856218338013
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s0",
+      "ok": true,
+      "sec": 180.1585874557495
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s1",
+      "ok": true,
+      "sec": 183.16187644004822
+    },
+    {
+      "name": "C_c0.08_p20.0_coop_s2",
+      "ok": true,
+      "sec": 183.16110110282898
+    },
+    {
+      "name": "D_idshuf_c0.0_s0",
+      "ok": true,
+      "sec": 177.15154242515564
+    },
+    {
+      "name": "D_idshuf_c0.0_s1",
+      "ok": true,
+      "sec": 177.15192794799805
+    },
+    {
+      "name": "D_idshuf_c0.0_s2",
+      "ok": true,
+      "sec": 177.14957308769226
+    },
+    {
+      "name": "D_idshuf_c0.04_s0",
+      "ok": true,
+      "sec": 177.1492838859558
+    },
+    {
+      "name": "D_idshuf_c0.04_s1",
+      "ok": true,
+      "sec": 180.151620388031
+    },
+    {
+      "name": "D_idshuf_c0.04_s2",
+      "ok": true,
+      "sec": 180.15068125724792
+    },
+    {
+      "name": "D_range0.03_c0.0_s0",
+      "ok": true,
+      "sec": 180.15914726257324
+    },
+    {
+      "name": "D_range0.03_c0.0_s1",
+      "ok": true,
+      "sec": 177.15554285049438
+    },
+    {
+      "name": "D_range0.03_c0.0_s2",
+      "ok": true,
+      "sec": 177.15554666519165
+    },
+    {
+      "name": "D_range0.03_c0.04_s0",
+      "ok": true,
+      "sec": 177.15483903884888
+    },
+    {
+      "name": "D_range0.03_c0.04_s1",
+      "ok": true,
+      "sec": 180.15873956680298
+    },
+    {
+      "name": "D_range0.03_c0.04_s2",
+      "ok": true,
+      "sec": 180.15791583061218
+    },
+    {
+      "name": "D_range0.003_c0.0_s0",
+      "ok": true,
+      "sec": 177.1558027267456
+    },
+    {
+      "name": "D_range0.003_c0.0_s1",
+      "ok": true,
+      "sec": 177.1524817943573
+    },
+    {
+      "name": "D_range0.003_c0.0_s2",
+      "ok": true,
+      "sec": 171.14825820922852
+    },
+    {
+      "name": "D_range0.003_c0.04_s0",
+      "ok": true,
+      "sec": 177.15183806419373
+    },
+    {
+      "name": "D_range0.003_c0.04_s1",
+      "ok": true,
+      "sec": 174.14569997787476
+    },
+    {
+      "name": "D_range0.003_c0.04_s2",
+      "ok": true,
+      "sec": 174.14489150047302
+    }
+  ]
+}

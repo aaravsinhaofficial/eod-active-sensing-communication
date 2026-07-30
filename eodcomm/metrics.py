@@ -90,7 +90,7 @@ def collect(tr, env, n_steps: int, channel: ChannelSpec | None = None, seed: int
     rec = {k: [] for k in (
         "emit", "heard", "rew", "ate", "struck", "bit", "bitten", "pos", "theta",
         "size", "nearest_food", "food_near10", "pred_dist", "p_emit", "act",
-        "dturn", "dspeed", "obs", "hx",
+        "dturn", "dspeed", "obs", "hx", "signal",
     )}
     for _ in range(n_steps):
         flat = obs.reshape(1, B * F, D)
@@ -118,9 +118,11 @@ def collect(tr, env, n_steps: int, channel: ChannelSpec | None = None, seed: int
         else:
             rec["pred_dist"].append(torch.full((B, F), 1e6, device=env.dev))
 
-        nobs, rew, done, info = env.step(act.reshape(B, F, 4), channel)
-        rec["act"].append(act.reshape(B, F, 4))
+        A = env.act_dim
+        nobs, rew, done, info = env.step(act.reshape(B, F, A), channel)
+        rec["act"].append(act.reshape(B, F, A))
         rec["emit"].append(info["emit_self"].to(torch.float32))
+        rec["signal"].append(info.get("signal", info["emit_self"]).to(torch.float32))
         rec["heard"].append(info["heard"])
         rec["rew"].append(rew)
         rec["ate"].append(info["ate"])
@@ -191,7 +193,7 @@ def causal_influence(tr, env, n_steps: int = 256, seed: int = 0):
             ci_null[j] += kl_n.mean(0)
         env.g.set_state(gstate)
         n += 1
-        obs, _, done, _ = env.step(act.reshape(B, F, 4))
+        obs, _, done, _ = env.step(act.reshape(B, F, env.act_dim))
         if done:
             obs = env.reset(); tr.reset_state()
     ci, ci_null = (ci / n).cpu().numpy(), (ci_null / n).cpu().numpy()
@@ -241,7 +243,7 @@ def positive_listening(tr, env, n_steps: int = 256, seed: int = 0):
         pl_null += l1(pf, pz)
         env.g.set_state(gstate)
         n += 1
-        obs, _, done, _ = env.step(act.reshape(B, F, 4))
+        obs, _, done, _ = env.step(act.reshape(B, F, env.act_dim))
         if done:
             obs = env.reset(); tr.reset_state(); hist = []
     return pl / n, pl_null / n
@@ -259,6 +261,46 @@ def _window_count(emit: np.ndarray, w: int = 21) -> np.ndarray:
     for t in range(T):
         lo = max(0, t - w + 1)
         out[t] = c[t + 1] - c[lo]
+    return out
+
+
+def signal_bit_metrics(rec: dict, w: int = 21, nbin: int = 6):
+    """Positive signalling carried by the *decoupled* variable.
+
+    The subtype bit is conditioned on the pulse having been emitted at all, so
+    that we measure how the sender modulates content rather than how often it
+    probes.  Geometry is stratified out as in `positive_signaling`.
+    """
+    sig = rec["signal"].cpu().numpy()
+    emit = rec["emit"].cpu().numpy()
+    if sig.sum() == 0 or np.allclose(sig, emit):
+        return None
+    pos = rec["pos"].cpu().numpy()
+    T, B, F = emit.shape
+    # fraction of the window's pulses that carried the subtype
+    cnt_s = _window_count(sig, w)
+    cnt_e = _window_count(emit, w)
+    frac = np.where(cnt_e > 0, cnt_s / np.maximum(cnt_e, 1e-9), 0.0)
+    msg = quantize(frac.reshape(-1), nbin)
+
+    d = np.linalg.norm(pos[:, :, :, None, :] - pos[:, :, None, :, :], axis=-1)
+    d = d + np.eye(F)[None, None] * 1e6
+    strat = quantize(d.min(-1).reshape(-1), 5)
+
+    out = {"rate": float(sig.sum() / max(emit.sum(), 1e-9))}
+    rng = np.random.default_rng(0)
+    for k, v in (("food", rec["food_near10"].cpu().numpy().reshape(-1)),
+                 ("dominance", rec["size"].cpu().numpy().reshape(-1)),
+                 ("movement", rec["dturn"].cpu().numpy().reshape(-1))):
+        if np.nanstd(v) == 0:
+            out[k] = {"mi": 0.0, "null": 0.0, "p": 1.0}
+            continue
+        yq = quantize(v, nbin)
+        f = lambda a, b: cmi_plugin(a, b, strat, nbin, nbin, 5)  # noqa: E731
+        mi = f(msg, yq)
+        null = np.array([f(msg, yq[rng.permutation(yq.size)]) for _ in range(40)])
+        out[k] = {"mi": float(mi), "null": float(null.mean()),
+                  "p": float((null >= mi).mean())}
     return out
 
 
@@ -378,8 +420,16 @@ def decode_content(rec: dict, w: int = 21, horizon: int = 41):
 # Sender Shaping Index: the cue / signal discriminator
 # ---------------------------------------------------------------------------
 
+def knollen_slice(env):
+    """Index range of the knollen block (plus its size metadata) in the observation."""
+    from . import constants as C
+    a = C.NUM_MORM + C.NUM_AMP
+    b = a + C.NUM_KNOLLEN * (env.F - 1) + (env.F - 1)
+    return a, b
+
+
 @torch.no_grad()
-def sender_shaping_index(nets_hearing, nets_deaf, ctx_obs, device="cuda"):
+def sender_shaping_index(nets_hearing, nets_deaf, ctx_obs, device="cuda", mask=None):
     """SSI = between-condition divergence / within-condition seed divergence - 1.
 
     Two populations are trained identically except that in one, receivers can
@@ -390,8 +440,18 @@ def sender_shaping_index(nets_hearing, nets_deaf, ctx_obs, device="cuda"):
     because of that effect" clause, made measurable.
 
     `ctx_obs` is a common, condition-neutral batch of observations so both
-    populations are evaluated on identical inputs.
+    populations are evaluated on identical inputs.  `mask` should zero the
+    knollen block: a deaf-world policy never saw a non-zero knollen input during
+    training, so evaluating it on one would measure out-of-distribution
+    extrapolation rather than a difference in emission policy.  With the block
+    zeroed, both populations are inside the support they were trained on (a
+    hearing agent sees an all-zero knollen block whenever no conspecific has just
+    discharged), and any remaining divergence is a genuine difference in how the
+    two worlds decided to schedule discharges.
     """
+    if mask is not None:
+        ctx_obs = ctx_obs.clone()
+        ctx_obs[:, mask[0]:mask[1]] = 0.0
     def emit_p(net, obs):
         h = torch.zeros((1, obs.shape[0], net.gru.hidden_size), device=device)
         _, _, lg, _ = net.policy(obs[None], h)
